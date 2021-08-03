@@ -44,7 +44,7 @@ Webpage runs at localhost:8080
         * run 'python manage.py python' to enter interactive python shell
         * run the code below 
     
-'''
+```
 from django.contrib.auth.models import User
 from boards.models import Board, Thread, Post
 
@@ -59,7 +59,7 @@ for i in range(40):
         Post.objects.create(message=f'Lorem ipsum...{j}', thread=thread, created_by=user)
 
 
-'''
+```
 
 ## Built With
 
