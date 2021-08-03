@@ -1,1 +1,9 @@
+# python
+__pycache__/
+*.py[cod]
+.env
+venv/
+*/migrations
+
+# docker db location
 /data

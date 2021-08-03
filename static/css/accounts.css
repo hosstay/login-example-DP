@@ -1,0 +1,12 @@
+body {
+    background-image: url(../img/vladimir-fedotov-GWggAB8uAlA-unsplash.jpg);
+}
+
+.logo a {
+    color: rgba(0,0,0,.9);
+}
+
+.logo a:hover,
+.logo a:active {
+    text-decoration: none;
+}
