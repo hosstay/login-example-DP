@@ -3,29 +3,29 @@ from django.test import TestCase
 from django.urls import resolve, reverse
 
 from ..forms import PostForm
-from ..models import Board, Post, Topic
-from ..views import reply_topic
+from ..models import Board, Post, Thread
+from ..views import new_parent_post
 
-class ReplyTopicTestCase(TestCase):
+class NewParentPostTestCase(TestCase):
     '''
-    Base test case to be used in all `reply_topic` view tests
+    Base test case to be used in all `new_parent_post` view tests
     '''
     def setUp(self):
         self.board = Board.objects.create(name='Django', description='Django board.')
         self.username = 'john'
         self.password = '123'
         user = User.objects.create_user(username=self.username, email='john@doe.com', password=self.password)
-        self.topic = Topic.objects.create(subject='Hello, world', board=self.board, starter=user)
-        Post.objects.create(message='Lorem ipsum dolor sit amet', topic=self.topic, created_by=user)
-        self.url = reverse('reply_topic', kwargs={'pk': self.board.pk, 'topic_pk': self.topic.pk})
+        self.thread = Thread.objects.create(subject='Hello, world', board=self.board, starter=user)
+        Post.objects.create(message='Lorem ipsum dolor sit amet', thread=self.thread, created_by=user)
+        self.url = reverse('new_parent_post', kwargs={'pk': self.board.pk, 'thread_pk': self.thread.pk})
 
-class LoginRequiredReplyTopicTests(ReplyTopicTestCase):
+class LoginRequiredNewParentPostTests(NewParentPostTestCase):
     def test_redirection(self):
         login_url = reverse('login')
         response = self.client.get(self.url)
         self.assertRedirects(response, f'{login_url}?next={self.url}')
 
-class ReplyTopicTests(ReplyTopicTestCase):
+class NewParentPostTests(NewParentPostTestCase):
     def setUp(self):
         super().setUp()
         self.client.login(username=self.username, password=self.password)
@@ -35,8 +35,8 @@ class ReplyTopicTests(ReplyTopicTestCase):
         self.assertEquals(self.response.status_code, 200)
 
     def test_view_function(self):
-        view = resolve('/boards/1/topics/1/reply/')
-        self.assertEquals(view.func, reply_topic)
+        view = resolve('/boards/1/threads/1/new_parent_post/')
+        self.assertEquals(view.func, new_parent_post)
 
     def test_csrf(self):
         self.assertContains(self.response, 'csrfmiddlewaretoken')
@@ -52,7 +52,7 @@ class ReplyTopicTests(ReplyTopicTestCase):
         self.assertContains(self.response, '<input', 1)
         self.assertContains(self.response, '<textarea', 1)
 
-class SuccessfulReplyTopicTests(ReplyTopicTestCase):
+class SuccessfulNewParentPostTests(NewParentPostTestCase):
     def setUp(self):
         super().setUp()
         self.client.login(username=self.username, password=self.password)
@@ -62,22 +62,22 @@ class SuccessfulReplyTopicTests(ReplyTopicTestCase):
         '''
         A valid form submission should redirect the user
         '''
-        url = reverse('topic_posts', kwargs={'pk': self.board.pk, 'topic_pk': self.topic.pk})
-        topic_posts_url = f'{url}?page=1#22'
-        self.assertRedirects(self.response, topic_posts_url)
+        url = reverse('view_thread', kwargs={'pk': self.board.pk, 'thread_pk': self.thread.pk})
+        view_thread_url = f'{url}?page=1#22'
+        self.assertRedirects(self.response, view_thread_url)
 
     def test_reply_created(self):
         '''
         The total post count should be 2
-        The one created in the `ReplyTopicTestCase` setUp
+        The one created in the `NewParentPostTestCase` setUp
         and another created by the post data in this class
         '''
         self.assertEquals(Post.objects.count(), 2)
 
-class InvalidReplyTopicTests(ReplyTopicTestCase):
+class InvalidNewParentPostTests(NewParentPostTestCase):
     def setUp(self):
         '''
-        Submit an empty dictionary to the `reply_topic` view
+        Submit an empty dictionary to the `new_parent_post` view
         '''
         super().setUp()
         self.client.login(username=self.username, password=self.password)

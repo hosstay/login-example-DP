@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import resolve, reverse
 
-from ..models import Board, Post, Topic
+from ..models import Board, Post, Thread
 from ..views import PostUpdateView
 
 
@@ -17,11 +17,11 @@ class PostUpdateViewTestCase(TestCase):
         self.username = 'john'
         self.password = '123'
         user = User.objects.create_user(username=self.username, email='john@doe.com', password=self.password)
-        self.topic = Topic.objects.create(subject='Hello, world', board=self.board, starter=user)
-        self.post = Post.objects.create(message='Lorem ipsum dolor sit amet', topic=self.topic, created_by=user)
+        self.thread = Thread.objects.create(subject='Hello, world', board=self.board, starter=user)
+        self.post = Post.objects.create(message='Lorem ipsum dolor sit amet', thread=self.thread, created_by=user)
         self.url = reverse('edit_post', kwargs={
             'pk': self.board.pk,
-            'topic_pk': self.topic.pk,
+            'thread_pk': self.thread.pk,
             'post_pk': self.post.pk
         })
 
@@ -44,7 +44,7 @@ class UnauthorizedPostUpdateViewTests(PostUpdateViewTestCase):
 
     def test_status_code(self):
         '''
-        A topic should be edited only by the owner.
+        A thread should be edited only by the owner.
         Unauthorized users should get a 404 response (Page Not Found)
         '''
         self.assertEquals(self.response.status_code, 404)
@@ -60,7 +60,7 @@ class PostUpdateViewTests(PostUpdateViewTestCase):
         self.assertEquals(self.response.status_code, 200)
 
     def test_view_class(self):
-        view = resolve('/boards/1/topics/1/posts/1/edit/')
+        view = resolve('/boards/1/threads/1/posts/1/edit/')
         self.assertEquals(view.func.view_class, PostUpdateView)
 
     def test_csrf(self):
@@ -88,8 +88,8 @@ class SuccessfulPostUpdateViewTests(PostUpdateViewTestCase):
         '''
         A valid form submission should redirect the user
         '''
-        topic_posts_url = reverse('topic_posts', kwargs={'pk': self.board.pk, 'topic_pk': self.topic.pk})
-        self.assertRedirects(self.response, topic_posts_url)
+        view_thread_url = reverse('view_thread', kwargs={'pk': self.board.pk, 'thread_pk': self.thread.pk})
+        self.assertRedirects(self.response, view_thread_url)
 
     def test_post_changed(self):
         self.post.refresh_from_db()
@@ -99,7 +99,7 @@ class SuccessfulPostUpdateViewTests(PostUpdateViewTestCase):
 class InvalidPostUpdateViewTests(PostUpdateViewTestCase):
     def setUp(self):
         '''
-        Submit an empty dictionary to the `reply_topic` view
+        Submit an empty dictionary to the `new_parent_post` view
         '''
         super().setUp()
         self.client.login(username=self.username, password=self.password)

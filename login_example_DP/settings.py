@@ -63,10 +63,10 @@ ROOT_URLCONF = 'login_example_DP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -138,9 +138,9 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGOUT_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'boards'
 
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'boards'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

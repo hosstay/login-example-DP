@@ -7,19 +7,19 @@
 {% endblock %}
 
 {% block breadcrumb %}
-    <li class="breadcrumb-item"><a href="{% url 'home' %}">Boards</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'boards' %}">Boards</a></li>
     <li class="breadcrumb-item active">{{ board.name }}</li>
 {% endblock %}
 
 {% block content %}
     <div class="mb-4">
-        <a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">New topic</a>
+        <a href="{% url 'new_thread' board.pk %}" class="btn btn-primary">New thread</a>
     </div>
     
     <table class="table table-striped mb-4">
         <thead class="thead-dark">
             <tr>
-            <th>Topic</th>
+            <th>Thread</th>
             <th>Starter</th>
             <th>Replies</th>
             <th>Views</th>
@@ -27,38 +27,38 @@
             </tr>
         </thead>
         <tbody>
-            {% for topic in topics %}
-                {% url 'topic_posts' board.pk topic.pk as topic_url %}
+            {% for thread in threads %}
+                {% url 'view_thread' board.pk thread.pk as thread_url %}
                 <tr>
                     <td>
                         <p class="mb-0">
-                            <a href="{{ topic_url }}">{{ topic.subject }}</a>
+                            <a href="{{ thread_url }}">{{ thread.subject }}</a>
                         </p>
                         <small class="text-muted">
                             Pages:
-                            {% for i in topic.get_page_range %}
-                                <a href="{{ topic_url }}?page={{ i }}">{{ i }}</a>
+                            {% for i in thread.get_page_range %}
+                                <a href="{{ thread_url }}?page={{ i }}">{{ i }}</a>
                             {% endfor %}
-                            {% if topic.has_many_pages %}
-                                ... <a href="{{ topic_url }}?page={{ topic.get_page_count }}">Last Page</a>
+                            {% if thread.has_many_pages %}
+                                ... <a href="{{ thread_url }}?page={{ thread.get_page_count }}">Last Page</a>
                             {% endif %}
                         </small>
                     </td>
-                    <td>{{ topic.starter.username }}</td>
-                    <td>{{ topic.replies }}</td>
-                    <td>{{ topic.views }}</td>
-                    <td>{{ topic.last_updated|naturaltime }}</td>
+                    <td>{{ thread.starter.username }}</td>
+                    <td>{{ thread.replies }}</td>
+                    <td>{{ thread.views }}</td>
+                    <td>{{ thread.last_updated|naturaltime }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    {% comment %} {% if topics.has_other_pages %}
-        <nav aria-label="Topics pagination" class="mb-4">
+    {% comment %} {% if threads.has_other_pages %}
+        <nav aria-label="Threads pagination" class="mb-4">
             <ul class="pagination">
-                {% if topics.has_previous %}
+                {% if threads.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ topics.previous_page_number }}">Previous</a>
+                        <a class="page-link" href="?page={{ threads.previous_page_number }}">Previous</a>
                     </li>
                 {% else %}
                     <li class="page-item disabled">
@@ -66,8 +66,8 @@
                     </li>
                 {% endif %}
 
-                {% for page_num in topics.paginator.page_range %}
-                    {% if topics.number == page_num %}
+                {% for page_num in threads.paginator.page_range %}
+                    {% if threads.number == page_num %}
                         <li class="page-item active">
                             <span class="page-link">
                                 {{ page_num }}
@@ -81,9 +81,9 @@
                     {% endif %}
                 {% endfor %}
 
-                {% if topics.has_next %}
+                {% if threads.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ topics.next_page_number }}">Next</a>
+                        <a class="page-link" href="?page={{ threads.next_page_number }}">Next</a>
                     </li>
                 {% else %}
                     <li class="page-item disabled">

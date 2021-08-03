@@ -44,13 +44,13 @@ class SuccessfulSignUpTests(TestCase):
             'password2': 'abcdef123456'
         }
         self.response = self.client.post(url, data)
-        self.home_url = reverse('home')
+        self.boards_url = reverse('boards')
 
     def test_redirection(self):
         '''
-        A valid form submission should redirect the user to the home page
+        A valid form submission should redirect the user to the boards page
         '''
-        self.assertRedirects(self.response, self.home_url)
+        self.assertRedirects(self.response, self.boards_url)
 
     def test_user_creation(self):
         self.assertTrue(User.objects.exists())
@@ -61,7 +61,7 @@ class SuccessfulSignUpTests(TestCase):
         The resulting response should now have a `user` to its context,
         after a successful sign up.
         '''
-        response = self.client.get(self.home_url)
+        response = self.client.get(self.boards_url)
         user = response.context.get('user')
         self.assertTrue(user.is_authenticated)
 

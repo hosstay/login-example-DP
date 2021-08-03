@@ -7,39 +7,38 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse
 # from django.core.paginator import Page, Paginator, EmptyPage, PageNotAnInteger
 
+from .forms import NewThreadForm, PostForm
+from .models import Board, Thread, Post
 
-from .forms import NewTopicForm, PostForm
-from .models import Board, Topic, Post
-
-# def home(request):
+# def boards(request):
 #     boards = Board.objects.all()    
-#     return render(request, 'home.html', {'boards': boards})
+#     return render(request, 'boards.html', {'boards': boards})
 
 class BoardListView(ListView):
     model = Board
     context_object_name = 'boards'
-    template_name = 'home.html'
+    template_name = './boards/boards/boards.html'
 
-# def board_topics(request, pk):
+# def board_threads(request, pk):
 #     board = get_object_or_404(Board, pk = pk)
-#     queryset = board.topics.order_by('-last_updated').annotate(replies=Count('posts') - 1)
+#     queryset = board.threads.order_by('-last_updated').annotate(replies=Count('posts') - 1)
 #     page = request.GET.get('page', 1)
 
 #     paginator = Paginator(queryset, 20)
 
 #     try:
-#         topics = paginator.page(page)
+#         threads = paginator.page(page)
 #     except PageNotAnInteger:
-#         topics = paginator.page(1)
+#         threads = paginator.page(1)
 #     except EmptyPage:
-#         topics = paginator.page(paginator.num_pages)
+#         threads = paginator.page(paginator.num_pages)
 
-#     return render(request, 'topics.html', {'board': board, 'topics': topics})
+#     return render(request, 'threads.html', {'board': board, 'threads': threads})
 
-class TopicListView(ListView):
-    model = Topic
-    context_object_name = 'topics'
-    template_name = 'topics.html'
+class ThreadListView(ListView):
+    model = Thread
+    context_object_name = 'threads'
+    template_name = './boards/threads/threads.html'
     paginate_by = 20
 
     def get_context_data(self, **kwargs):
@@ -48,81 +47,81 @@ class TopicListView(ListView):
 
     def get_queryset(self):
         self.board = get_object_or_404(Board, pk=self.kwargs.get('pk'))
-        queryset = self.board.topics.order_by('-last_updated').annotate(replies=Count('posts') - 1)
+        queryset = self.board.threads.order_by('-last_updated').annotate(replies=Count('posts') - 1)
         return queryset
 
 @login_required
-def new_topic(request, pk):
+def new_thread(request, pk):
     board = get_object_or_404(Board, pk = pk)
 
     if request.method == 'POST':
-        form = NewTopicForm(request.POST)
+        form = NewThreadForm(request.POST)
         if form.is_valid():
-            topic = form.save(commit = False)
-            topic.board = board
-            topic.starter = request.user
-            topic.save()
+            thread = form.save(commit = False)
+            thread.board = board
+            thread.starter = request.user
+            thread.save()
             
             Post.objects.create(
                 message = form.cleaned_data.get('message'),
-                topic = topic,
+                thread = thread,
                 created_by = request.user
             )
-            return redirect('topic_posts', pk = pk, topic_pk = topic.pk)
+            return redirect('view_thread', pk = pk, thread_pk = thread.pk)
     else:
-        form = NewTopicForm()
+        form = NewThreadForm()
 
-    return render(request, 'new_topic.html', {'board': board, 'form': form})
+    return render(request, './boards/threads/new_thread.html', {'board': board, 'form': form})
 
 class PostListView(ListView):
     model = Post
     context_object_name = 'posts'
-    template_name = 'topic_posts.html'
+    template_name = './boards/posts/view_thread.html'
     paginate_by = 2
 
     def get_context_data(self, **kwargs):
-        session_key = f'viewed_topic_{self.topic.pk}'
+        session_key = f'viewed_thread_{self.thread.pk}'
         if not self.request.session.get(session_key, False):
-            self.topic.views += 1
-            self.topic.save()
+            self.thread.views += 1
+            self.thread.save()
             self.request.session[session_key] = True
 
-        kwargs['topic'] = self.topic
+        kwargs['thread'] = self.thread
         return super().get_context_data(**kwargs)
 
     def get_queryset(self):
-        self.topic = get_object_or_404(Topic, board__pk=self.kwargs.get('pk'), pk=self.kwargs.get('topic_pk'))
-        queryset = self.topic.posts.order_by('created_at')
+        self.thread = get_object_or_404(Thread, board__pk=self.kwargs.get('pk'), pk=self.kwargs.get('thread_pk'))
+        queryset = self.thread.posts.order_by('created_at')
         return queryset
 
 @login_required
-def reply_topic(request, pk, topic_pk):
-    topic = get_object_or_404(Topic, board__pk = pk, pk = topic_pk)
+def new_parent_post(request, pk, thread_pk):
+    thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
     
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit = False)
-            post.topic = topic
+            post.thread = thread
             post.created_by = request.user
             post.save()
 
-            topic.last_updated = timezone.now()
-            topic.save()
+            thread.last_updated = timezone.now()
+            thread.save()
 
-            topic_url = reverse('topic_posts', kwargs = {'pk': pk, 'topic_pk': topic_pk})
-            topic_post_url = f'{topic_url}?page={topic.get_page_count()}#{post.pk}'
+            thread_url = reverse('view_thread', kwargs = {'pk': pk, 'thread_pk': thread_pk})
+            thread_post_url = f'{thread_url}?page={thread.get_page_count()}#{post.pk}'
 
-            return redirect(topic_post_url)
+            return redirect(thread_post_url)
     else:
         form = PostForm()
-    return render(request, 'reply_topic.html', {'topic': topic, 'form': form})
+    return render(request, './boards/posts/new_parent_post.html', {'thread': thread, 'form': form})
 
 @method_decorator(login_required, name = 'dispatch')
 class PostUpdateView(UpdateView):
     model = Post
     fields = ('message', )
-    template_name = 'edit_post.html'
+    template_name = './boards/posts/edit_post.html'
     pk_url_kwarg = 'post_pk'
     context_object_name = 'post'
 
@@ -135,5 +134,4 @@ class PostUpdateView(UpdateView):
         post.updated_by = self.request.user
         post.updated_at = timezone.now()
         post.save()
-        return redirect('topic_posts', pk = post.topic.board.pk, topic_pk = post.topic.pk)
-
+        return redirect('view_thread', pk = post.thread.board.pk, thread_pk = post.thread.pk)
