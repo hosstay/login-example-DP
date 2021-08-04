@@ -50,7 +50,7 @@ for i in range(40):
     thread = Thread.objects.create(title=title, board=board, creator=user)
 
     for j in range(40):
-        Post.objects.create(message=f'Lorem ipsum...{j}', thread=thread, created_by=user)
+        Post.objects.create(text=f'Lorem ipsum...{j}', thread=thread, created_by=user)
 
 
 ```

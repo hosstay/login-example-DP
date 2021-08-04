@@ -52,7 +52,7 @@ class Thread(models.Model):
 
 
 class Post(models.Model):
-    message = models.TextField(max_length=4000)
+    text = models.TextField(max_length=4000)
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='posts', null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
@@ -60,8 +60,8 @@ class Post(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='+')
 
     def __str__(self):
-        truncated_message = Truncator(self.message)
-        return truncated_message.chars(30)
+        truncated_text = Truncator(self.text)
+        return truncated_text.chars(30)
 
-    def get_message_as_markdown(self):
-        return mark_safe(markdown(self.message, safe_mode='escape'))
+    def get_text_as_markdown(self):
+        return mark_safe(markdown(self.text, safe_mode='escape'))

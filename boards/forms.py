@@ -2,7 +2,7 @@ from django import forms
 from .models import Thread, Post
 
 class NewThreadForm(forms.ModelForm):
-    message = forms.CharField(
+    text = forms.CharField(
         widget = forms.Textarea(
             attrs = {'rows': 5, 'placeholder': 'What is on your mind?'}
         ),
@@ -12,9 +12,9 @@ class NewThreadForm(forms.ModelForm):
 
     class Meta:
         model = Thread
-        fields = ['title', 'message']
+        fields = ['title', 'text']
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['message', ]
+        fields = ['text', ]

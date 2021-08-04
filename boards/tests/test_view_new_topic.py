@@ -57,7 +57,7 @@ class NewThreadTests(TestCase):
         url = reverse('new_thread', kwargs={'pk': self.board.pk})
         data = {
             'title': 'Test title',
-            'message': 'Lorem ipsum dolor sit amet'
+            'text': 'Lorem ipsum dolor sit amet'
         }
         response = self.client.post(url, data)
         self.assertTrue(Thread.objects.exists())
@@ -88,7 +88,7 @@ class NewThreadTests(TestCase):
         url = reverse('new_thread', kwargs={'pk': self.board.pk})
         data = {
             'title': '',
-            'message': ''
+            'text': ''
         }
         response = self.client.post(url, data)
         self.assertEquals(response.status_code, 200)

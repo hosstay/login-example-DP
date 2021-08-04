@@ -16,7 +16,7 @@ class NewParentPostTestCase(TestCase):
         self.password = '123'
         user = User.objects.create_user(username=self.username, email='john@doe.com', password=self.password)
         self.thread = Thread.objects.create(title='Hello, world', board=self.board, creator=user)
-        Post.objects.create(message='Lorem ipsum dolor sit amet', thread=self.thread, created_by=user)
+        Post.objects.create(text='Lorem ipsum dolor sit amet', thread=self.thread, created_by=user)
         self.url = reverse('new_parent_post', kwargs={'pk': self.board.pk, 'thread_pk': self.thread.pk})
 
 class LoginRequiredNewParentPostTests(NewParentPostTestCase):
@@ -47,7 +47,7 @@ class NewParentPostTests(NewParentPostTestCase):
 
     def test_form_inputs(self):
         '''
-        The view must contain two inputs: csrf, message textarea
+        The view must contain two inputs: csrf, text textarea
         '''
         self.assertContains(self.response, '<input', 1)
         self.assertContains(self.response, '<textarea', 1)
@@ -56,7 +56,7 @@ class SuccessfulNewParentPostTests(NewParentPostTestCase):
     def setUp(self):
         super().setUp()
         self.client.login(username=self.username, password=self.password)
-        self.response = self.client.post(self.url, {'message': 'hello, world!'})
+        self.response = self.client.post(self.url, {'text': 'hello, world!'})
 
     def test_redirection(self):
         '''

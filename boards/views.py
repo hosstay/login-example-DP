@@ -63,7 +63,7 @@ def new_thread(request, pk):
             thread.save()
             
             Post.objects.create(
-                message = form.cleaned_data.get('message'),
+                text = form.cleaned_data.get('text'),
                 thread = thread,
                 created_by = request.user
             )
@@ -120,7 +120,7 @@ def new_parent_post(request, pk, thread_pk):
 @method_decorator(login_required, name = 'dispatch')
 class PostUpdateView(UpdateView):
     model = Post
-    fields = ('message', )
+    fields = ('text', )
     template_name = './boards/posts/edit_post.html'
     pk_url_kwarg = 'post_pk'
     context_object_name = 'post'

@@ -18,7 +18,7 @@ class PostUpdateViewTestCase(TestCase):
         self.password = '123'
         user = User.objects.create_user(username=self.username, email='john@doe.com', password=self.password)
         self.thread = Thread.objects.create(title='Hello, world', board=self.board, creator=user)
-        self.post = Post.objects.create(message='Lorem ipsum dolor sit amet', thread=self.thread, created_by=user)
+        self.post = Post.objects.create(text='Lorem ipsum dolor sit amet', thread=self.thread, created_by=user)
         self.url = reverse('edit_post', kwargs={
             'pk': self.board.pk,
             'thread_pk': self.thread.pk,
@@ -72,7 +72,7 @@ class PostUpdateViewTests(PostUpdateViewTestCase):
 
     def test_form_inputs(self):
         '''
-        The view must contain two inputs: csrf, message textarea
+        The view must contain two inputs: csrf, text textarea
         '''
         self.assertContains(self.response, '<input', 1)
         self.assertContains(self.response, '<textarea', 1)
@@ -82,7 +82,7 @@ class SuccessfulPostUpdateViewTests(PostUpdateViewTestCase):
     def setUp(self):
         super().setUp()
         self.client.login(username=self.username, password=self.password)
-        self.response = self.client.post(self.url, {'message': 'edited message'})
+        self.response = self.client.post(self.url, {'text': 'edited text'})
 
     def test_redirection(self):
         '''
@@ -93,7 +93,7 @@ class SuccessfulPostUpdateViewTests(PostUpdateViewTestCase):
 
     def test_post_changed(self):
         self.post.refresh_from_db()
-        self.assertEquals(self.post.message, 'edited message')
+        self.assertEquals(self.post.text, 'edited text')
 
 
 class InvalidPostUpdateViewTests(PostUpdateViewTestCase):
