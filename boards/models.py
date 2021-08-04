@@ -54,6 +54,7 @@ class Thread(models.Model):
 class Post(models.Model):
     text = models.TextField(max_length=4000)
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='posts', null=True)
+    is_master = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
