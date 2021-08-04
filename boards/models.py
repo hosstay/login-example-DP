@@ -21,14 +21,14 @@ class Board(models.Model):
 
 
 class Thread(models.Model):
-    subject = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
     last_updated = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='threads')
     starter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='threads')
     views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return self.subject
+        return self.title
 
     def get_page_count(self):
         count = self.posts.count()

@@ -12,7 +12,7 @@ class NewThreadForm(forms.ModelForm):
 
     class Meta:
         model = Thread
-        fields = ['subject', 'message']
+        fields = ['title', 'message']
 
 class PostForm(forms.ModelForm):
     class Meta:

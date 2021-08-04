@@ -46,8 +46,8 @@ user = User.objects.first() # need to have created a user with the webpage
 board = Board.objects.get(name='Django')
 
 for i in range(40):
-    subject = f'Thread test #{i}'
-    thread = Thread.objects.create(subject=subject, board=board, starter=user)
+    title = f'Thread test #{i}'
+    thread = Thread.objects.create(title=title, board=board, starter=user)
 
     for j in range(40):
         Post.objects.create(message=f'Lorem ipsum...{j}', thread=thread, created_by=user)

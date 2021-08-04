@@ -15,7 +15,7 @@ class NewParentPostTestCase(TestCase):
         self.username = 'john'
         self.password = '123'
         user = User.objects.create_user(username=self.username, email='john@doe.com', password=self.password)
-        self.thread = Thread.objects.create(subject='Hello, world', board=self.board, starter=user)
+        self.thread = Thread.objects.create(title='Hello, world', board=self.board, starter=user)
         Post.objects.create(message='Lorem ipsum dolor sit amet', thread=self.thread, created_by=user)
         self.url = reverse('new_parent_post', kwargs={'pk': self.board.pk, 'thread_pk': self.thread.pk})
 

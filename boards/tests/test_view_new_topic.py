@@ -56,7 +56,7 @@ class NewThreadTests(TestCase):
     def test_new_thread_valid_post_data(self):
         url = reverse('new_thread', kwargs={'pk': self.board.pk})
         data = {
-            'subject': 'Test title',
+            'title': 'Test title',
             'message': 'Lorem ipsum dolor sit amet'
         }
         response = self.client.post(url, data)
@@ -87,7 +87,7 @@ class NewThreadTests(TestCase):
         '''
         url = reverse('new_thread', kwargs={'pk': self.board.pk})
         data = {
-            'subject': '',
+            'title': '',
             'message': ''
         }
         response = self.client.post(url, data)

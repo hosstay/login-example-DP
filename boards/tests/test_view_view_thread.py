@@ -9,7 +9,7 @@ class ViewThreadTests(TestCase):
     def setUp(self):
         board = Board.objects.create(name='Django', description='Django board.')
         user = User.objects.create_user(username='john', email='john@doe.com', password='123')
-        thread = Thread.objects.create(subject='Hello, world', board=board, starter=user)
+        thread = Thread.objects.create(title='Hello, world', board=board, starter=user)
         Post.objects.create(message='Lorem ipsum dolor sit amet', thread=thread, created_by=user)
         url = reverse('view_thread', kwargs={'pk': board.pk, 'thread_pk': thread.pk})
         self.response = self.client.get(url)
