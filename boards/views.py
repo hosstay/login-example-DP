@@ -71,6 +71,7 @@ class NewThread(View):
             Post.objects.create(
                 text = form.cleaned_data.get('text'),
                 thread = thread,
+                is_master = True,
                 created_by = request.user
             )
             return redirect('view_thread', pk = pk, thread_pk = thread.pk)
