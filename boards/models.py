@@ -22,6 +22,7 @@ class Board(models.Model):
 
 class Thread(models.Model):
     title = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='threads')
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='threads')
