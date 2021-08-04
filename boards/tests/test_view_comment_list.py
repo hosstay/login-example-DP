@@ -5,7 +5,7 @@ from django.urls import resolve, reverse
 from ..models import Board, Comment, Thread
 from ..views import CommentList
 
-class ViewThreadTests(TestCase):
+class CommentListTests(TestCase):
     def setUp(self):
         board = Board.objects.create(name='Django', description='Django board.')
         user = User.objects.create_user(username='john', email='john@doe.com', password='123')

@@ -29,10 +29,10 @@ class Signup(View):
         return self.render(request)
 
 @method_decorator(login_required, name = 'dispatch')
-class UserUpdate(UpdateView):
+class EditUser(UpdateView):
     model = User
     fields = ('first_name', 'last_name', 'email', )
-    template_name = './accounts/my_account/my_account.html'
+    template_name = './accounts/my_account/edit_user.html'
     success_url = reverse_lazy('my_account')
 
     def get_object(self):

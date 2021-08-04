@@ -4,7 +4,7 @@ from django.test import TestCase
 from ..views import ThreadList
 from ..models import Board
 
-class BoardThreadsTests(TestCase):
+class ThreadListTests(TestCase):
     @classmethod
     def setUpTestData(self):
         self.board = Board.objects.create(name = 'Django', description = 'Django board.')

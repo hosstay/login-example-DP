@@ -5,12 +5,12 @@ from django.test import TestCase
 from django.urls import resolve, reverse
 
 from ..models import Board, Comment, Thread
-from ..views import CommentUpdate
+from ..views import EditComment
 
 
-class CommentUpdateTestCase(TestCase):
+class EditCommentTestCase(TestCase):
     '''
-    Base test case to be used in all `CommentUpdate` view tests
+    Base test case to be used in all `EditComment` view tests
     '''
     def setUp(self):
         self.board = Board.objects.create(name='Django', description='Django board.')
@@ -26,14 +26,14 @@ class CommentUpdateTestCase(TestCase):
         })
 
 
-class LoginRequiredCommentUpdateTests(CommentUpdateTestCase):
+class LoginRequiredEditCommentTests(EditCommentTestCase):
     def test_redirection(self):
         login_url = reverse('login')
         response = self.client.get(self.url)
         self.assertRedirects(response, '{login_url}?next={url}'.format(login_url=login_url, url=self.url))
 
 
-class UnauthorizedCommentUpdateTests(CommentUpdateTestCase):
+class UnauthorizedEditCommentTests(EditCommentTestCase):
     def setUp(self):
         super().setUp()
         username = 'jane'
@@ -50,7 +50,7 @@ class UnauthorizedCommentUpdateTests(CommentUpdateTestCase):
         self.assertEquals(self.response.status_code, 404)
 
 
-class CommentUpdateTests(CommentUpdateTestCase):
+class EditCommentTests(EditCommentTestCase):
     def setUp(self):
         super().setUp()
         self.client.login(username=self.username, password=self.password)
@@ -61,7 +61,7 @@ class CommentUpdateTests(CommentUpdateTestCase):
 
     def test_view_class(self):
         view = resolve('/boards/1/threads/1/comments/1/edit/')
-        self.assertEquals(view.func.view_class, CommentUpdate)
+        self.assertEquals(view.func.view_class, EditComment)
 
     def test_csrf(self):
         self.assertContains(self.response, 'csrfmiddlewaretoken')
@@ -78,7 +78,7 @@ class CommentUpdateTests(CommentUpdateTestCase):
         self.assertContains(self.response, '<textarea', 1)
 
 
-class SuccessfulCommentUpdateTests(CommentUpdateTestCase):
+class SuccessfulEditCommentTests(EditCommentTestCase):
     def setUp(self):
         super().setUp()
         self.client.login(username=self.username, password=self.password)
@@ -96,7 +96,7 @@ class SuccessfulCommentUpdateTests(CommentUpdateTestCase):
         self.assertEquals(self.comment.text, 'edited text')
 
 
-class InvalidCommentUpdateTests(CommentUpdateTestCase):
+class InvalidEditCommentTests(EditCommentTestCase):
     def setUp(self):
         '''
         Submit an empty dictionary to the `new_parent_comment` view

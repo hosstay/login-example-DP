@@ -17,7 +17,7 @@ from .models import Board, Thread, Comment
 class BoardList(ListView):
     model = Board
     context_object_name = 'boards'
-    template_name = './boards/boards/boards.html'
+    template_name = './boards/boards/board_list.html'
 
 # def board_threads(request, pk):
 #     board = get_object_or_404(Board, pk = pk)
@@ -38,7 +38,7 @@ class BoardList(ListView):
 class ThreadList(ListView):
     model = Thread
     context_object_name = 'threads'
-    template_name = './boards/threads/threads.html'
+    template_name = './boards/threads/thread_list.html'
     paginate_by = 20
 
     def get_context_data(self, **kwargs):
@@ -84,7 +84,7 @@ class NewThread(View):
 class CommentList(ListView):
     model = Comment
     context_object_name = 'comments'
-    template_name = './boards/comments/view_thread.html'
+    template_name = './boards/comments/comment_list.html'
     paginate_by = 2
 
     def get_context_data(self, **kwargs):
@@ -134,7 +134,7 @@ class NewParentComment(View):
         return self.render(request, pk, thread_pk)
 
 @method_decorator(login_required, name = 'dispatch')
-class CommentUpdate(UpdateView):
+class EditComment(UpdateView):
     model = Comment
     fields = ('text', )
     template_name = './boards/comments/edit_comment.html'

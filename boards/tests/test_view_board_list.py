@@ -5,7 +5,7 @@ from django.test import TestCase
 from ..views import BoardList
 from ..models import Board
 
-class BoardsTests(TestCase):
+class BoardListTests(TestCase):
     @classmethod
     def setUpTestData(self):
         self.board = Board.objects.create(name = 'Django', description = 'Django board.')

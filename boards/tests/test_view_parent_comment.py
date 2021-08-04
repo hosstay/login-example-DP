@@ -63,7 +63,8 @@ class SuccessfulNewParentCommentTests(NewParentCommentTestCase):
         A valid form submission should redirect the user
         '''
         url = reverse('view_thread', kwargs={'pk': self.board.pk, 'thread_pk': self.thread.pk})
-        view_thread_url = f'{url}?page=1#22'
+        # the below number is hardcoded and a method of not doing that needs to be found.
+        view_thread_url = f'{url}?page=1#24'
         self.assertRedirects(self.response, view_thread_url)
 
     def test_reply_created(self):
