@@ -21,7 +21,7 @@ class BoardListView(ListView):
 
 # def board_threads(request, pk):
 #     board = get_object_or_404(Board, pk = pk)
-#     queryset = board.threads.order_by('-last_updated').annotate(replies = Count('posts') - 1)
+#     queryset = board.threads.order_by('-last_post_at').annotate(replies = Count('posts') - 1)
 #     page = request.GET.get('page', 1)
 
 #     paginator = Paginator(queryset, 20)
@@ -47,7 +47,7 @@ class ThreadListView(ListView):
 
     def get_queryset(self):
         self.board = get_object_or_404(Board, pk = self.kwargs.get('pk'))
-        queryset = self.board.threads.order_by('-last_updated').annotate(replies = Count('posts') - 1)
+        queryset = self.board.threads.order_by('-last_post_at').annotate(replies = Count('posts') - 1)
         return queryset
 
 @method_decorator(login_required, name = 'dispatch')
@@ -120,7 +120,7 @@ class NewParentPost(View):
             post.created_by = request.user
             post.save()
 
-            thread.last_updated = timezone.now()
+            thread.last_post_at = timezone.now()
             thread.save()
 
             thread_url = reverse('view_thread', kwargs = {'pk': pk, 'thread_pk': thread_pk})

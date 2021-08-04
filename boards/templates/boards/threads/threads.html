@@ -23,7 +23,7 @@
             <th>Creator</th>
             <th>Replies</th>
             <th>Views</th>
-            <th>Last Update</th>
+            <th>Last Post</th>
             </tr>
         </thead>
         <tbody>
@@ -47,7 +47,7 @@
                     <td>{{ thread.creator.username }}</td>
                     <td>{{ thread.replies }}</td>
                     <td>{{ thread.views }}</td>
-                    <td>{{ thread.last_updated|naturaltime }}</td>
+                    <td>{{ thread.last_post_at|naturaltime }}</td>
                 </tr>
             {% endfor %}
         </tbody>
