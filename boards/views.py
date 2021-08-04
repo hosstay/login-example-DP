@@ -1,7 +1,7 @@
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import UpdateView, ListView
+from django.views.generic import View, ListView, UpdateView
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.urls import reverse
@@ -21,7 +21,7 @@ class BoardListView(ListView):
 
 # def board_threads(request, pk):
 #     board = get_object_or_404(Board, pk = pk)
-#     queryset = board.threads.order_by('-last_updated').annotate(replies=Count('posts') - 1)
+#     queryset = board.threads.order_by('-last_updated').annotate(replies = Count('posts') - 1)
 #     page = request.GET.get('page', 1)
 
 #     paginator = Paginator(queryset, 20)
@@ -46,16 +46,22 @@ class ThreadListView(ListView):
         return super().get_context_data(**kwargs)
 
     def get_queryset(self):
-        self.board = get_object_or_404(Board, pk=self.kwargs.get('pk'))
-        queryset = self.board.threads.order_by('-last_updated').annotate(replies=Count('posts') - 1)
+        self.board = get_object_or_404(Board, pk = self.kwargs.get('pk'))
+        queryset = self.board.threads.order_by('-last_updated').annotate(replies = Count('posts') - 1)
         return queryset
 
-@login_required
-def new_thread(request, pk):
-    board = get_object_or_404(Board, pk = pk)
+@method_decorator(login_required, name = 'dispatch')
+class NewThread(View):
+    def render(self, request, pk, form = None):
+        form = form if form else NewThreadForm()
+        board = get_object_or_404(Board, pk = pk)
 
-    if request.method == 'POST':
+        return render(request, './boards/threads/new_thread.html', {'board': board, 'form': form})
+
+    def post(self, request, pk):
         form = NewThreadForm(request.POST)
+        board = get_object_or_404(Board, pk = pk)
+
         if form.is_valid():
             thread = form.save(commit = False)
             thread.board = board
@@ -68,10 +74,11 @@ def new_thread(request, pk):
                 created_by = request.user
             )
             return redirect('view_thread', pk = pk, thread_pk = thread.pk)
-    else:
-        form = NewThreadForm()
 
-    return render(request, './boards/threads/new_thread.html', {'board': board, 'form': form})
+        return self.render(request, pk, form)
+    
+    def get(self, request, pk):
+        return self.render(request, pk)
 
 class PostListView(ListView):
     model = Post
@@ -90,16 +97,22 @@ class PostListView(ListView):
         return super().get_context_data(**kwargs)
 
     def get_queryset(self):
-        self.thread = get_object_or_404(Thread, board__pk=self.kwargs.get('pk'), pk=self.kwargs.get('thread_pk'))
+        self.thread = get_object_or_404(Thread, board__pk = self.kwargs.get('pk'), pk = self.kwargs.get('thread_pk'))
         queryset = self.thread.posts.order_by('created_at')
         return queryset
 
-@login_required
-def new_parent_post(request, pk, thread_pk):
-    thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
-    
-    if request.method == 'POST':
+@method_decorator(login_required, name = 'dispatch')
+class NewParentPost(View):
+    def render(self, request, pk, thread_pk, form = None):
+        form = form if form else PostForm()
+        thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
+
+        return render(request, './boards/posts/new_parent_post.html', {'thread': thread, 'form': form})
+
+    def post(self, request, pk, thread_pk):
         form = PostForm(request.POST)
+        thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
+
         if form.is_valid():
             post = form.save(commit = False)
             post.thread = thread
@@ -113,9 +126,11 @@ def new_parent_post(request, pk, thread_pk):
             thread_post_url = f'{thread_url}?page={thread.get_page_count()}#{post.pk}'
 
             return redirect(thread_post_url)
-    else:
-        form = PostForm()
-    return render(request, './boards/posts/new_parent_post.html', {'thread': thread, 'form': form})
+
+        return self.render(request, pk, thread_pk, form)
+
+    def get(self, request, pk, thread_pk):
+        return self.render(request, pk, thread_pk)
 
 @method_decorator(login_required, name = 'dispatch')
 class PostUpdateView(UpdateView):

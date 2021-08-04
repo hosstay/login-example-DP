@@ -4,7 +4,7 @@ from django.urls import resolve, reverse
 
 from ..forms import PostForm
 from ..models import Board, Post, Thread
-from ..views import new_parent_post
+from ..views import NewParentPost
 
 class NewParentPostTestCase(TestCase):
     '''
@@ -36,7 +36,7 @@ class NewParentPostTests(NewParentPostTestCase):
 
     def test_view_function(self):
         view = resolve('/boards/1/threads/1/new_parent_post/')
-        self.assertEquals(view.func, new_parent_post)
+        self.assertEquals(view.func.view_class, NewParentPost)
 
     def test_csrf(self):
         self.assertContains(self.response, 'csrfmiddlewaretoken')

@@ -28,7 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # auth urls
-    path('signup/', account_views.signup, name = 'signup'),
+    path('signup/', account_views.Signup.as_view(), name = 'signup'),
     path('login/', auth_views.LoginView.as_view(template_name='./accounts/login/login.html'), name = 'login'),
     path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),
 
@@ -75,11 +75,11 @@ urlpatterns = [
     path('', board_views.BoardListView.as_view(), name = 'boards'),
     # path('boards/<int:pk>/', board_views.board_threads, name = 'board_threads'),
     path('boards/<int:pk>/', board_views.ThreadListView.as_view(), name = 'board_threads'),
-    path('boards/<int:pk>/new/', board_views.new_thread, name = 'new_thread'),
+    path('boards/<int:pk>/new/', board_views.NewThread.as_view(), name = 'new_thread'),
 
     # post urls
     path('boards/<int:pk>/threads/<int:thread_pk>/', board_views.PostListView.as_view(), name = 'view_thread'),
-    path('boards/<int:pk>/threads/<int:thread_pk>/new_parent_post/', board_views.new_parent_post, name = 'new_parent_post'),
+    path('boards/<int:pk>/threads/<int:thread_pk>/new_parent_post/', board_views.NewParentPost.as_view(), name = 'new_parent_post'),
     path('boards/<int:pk>/threads/<int:thread_pk>/posts/<int:post_pk>/edit/', board_views.PostUpdateView.as_view(), name = 'edit_post'),
 
     # account urls

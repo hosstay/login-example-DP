@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse, resolve
 from django.test import TestCase
 
-from ..views import new_thread
+from ..views import NewThread
 from ..models import Board, Thread, Post
 from ..forms import NewThreadForm
 
@@ -40,7 +40,7 @@ class NewThreadTests(TestCase):
 
     def test_new_thread_url_resolves_new_thread_view(self):
         view = resolve('/boards/1/new/')
-        self.assertEquals(view.func, new_thread)
+        self.assertEquals(view.func.view_class, NewThread)
 
     def test_new_thread_view_contains_link_back_to_board_threads_view(self):
         new_thread_url = reverse('new_thread', kwargs={'pk': self.board.pk})

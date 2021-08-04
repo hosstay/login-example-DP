@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse, resolve
 from django.test import TestCase
 
-from ..views import signup
+from ..views import Signup
 from ..forms import SignUpForm
 
 class SignUpTests(TestCase):
@@ -15,7 +15,7 @@ class SignUpTests(TestCase):
 
     def test_signup_url_resolves_signup_view(self):
         view = resolve('/signup/')
-        self.assertEquals(view.func, signup)
+        self.assertEquals(view.func.view_class, Signup)
 
     def test_csrf(self):
         self.assertContains(self.response, 'csrfmiddlewaretoken')
