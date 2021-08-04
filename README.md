@@ -33,14 +33,14 @@ Webpage runs at localhost:8080
     * Create at least 1 board (Showing DB method):
         * exec into postgres docker container and log into postgres
         * run 'INSERT INTO boards_board (name, description) VALUES ('Django', 'For Django discussion');
-    * Create a bunch of threads and posts (Showing interactive shell method):
+    * Create a bunch of threads and comments (Showing interactive shell method):
         * exec into app docker container
         * run 'python manage.py python' to enter interactive python shell
         * run the code below 
     
 ```
 from django.contrib.auth.models import User
-from boards.models import Board, Thread, Post
+from boards.models import Board, Thread, Comment
 
 user = User.objects.first() # need to have created a user with the webpage
 board = Board.objects.get(name='Django')
@@ -50,7 +50,7 @@ for i in range(40):
     thread = Thread.objects.create(title=title, board=board, creator=user)
 
     for j in range(40):
-        Post.objects.create(text=f'Lorem ipsum...{j}', thread=thread, created_by=user)
+        Comment.objects.create(text=f'Lorem ipsum...{j}', thread=thread, created_by=user)
 
 
 ```

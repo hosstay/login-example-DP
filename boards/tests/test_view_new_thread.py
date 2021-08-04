@@ -3,7 +3,7 @@ from django.urls import reverse, resolve
 from django.test import TestCase
 
 from ..views import NewThread
-from ..models import Board, Thread, Post
+from ..models import Board, Thread, Comment
 from ..forms import NewThreadForm
 
 class LoginRequiredNewThreadTests(TestCase):
@@ -53,7 +53,7 @@ class NewThreadTests(TestCase):
         response = self.client.get(url)
         self.assertContains(response, 'csrfmiddlewaretoken')
 
-    def test_new_thread_valid_post_data(self):
+    def test_new_thread_valid_comment_data(self):
         url = reverse('new_thread', kwargs={'pk': self.board.pk})
         data = {
             'title': 'Test title',
@@ -61,7 +61,7 @@ class NewThreadTests(TestCase):
         }
         response = self.client.post(url, data)
         self.assertTrue(Thread.objects.exists())
-        self.assertTrue(Post.objects.exists())
+        self.assertTrue(Comment.objects.exists())
 
     def test_contains_form(self):
         url = reverse('new_thread', kwargs={'pk': self.board.pk})
@@ -69,7 +69,7 @@ class NewThreadTests(TestCase):
         form = response.context.get('form')
         self.assertIsInstance(form, NewThreadForm)
 
-    def test_new_thread_invalid_post_data(self):
+    def test_new_thread_invalid_comment_data(self):
         '''
         Invalid post data should not redirect
         The expected behavior is to show the form again with validation errors
@@ -80,7 +80,7 @@ class NewThreadTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTrue(form.errors)
 
-    def test_new_thread_invalid_post_data_empty_fields(self):
+    def test_new_thread_invalid_comment_data_empty_fields(self):
         '''
         Invalid post data should not redirect
         The expected behavior is to show the form again with validation errors
@@ -93,4 +93,4 @@ class NewThreadTests(TestCase):
         response = self.client.post(url, data)
         self.assertEquals(response.status_code, 200)
         self.assertFalse(Thread.objects.exists())
-        self.assertFalse(Post.objects.exists())
+        self.assertFalse(Comment.objects.exists())

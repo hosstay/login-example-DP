@@ -77,10 +77,10 @@ urlpatterns = [
     path('boards/<int:pk>/', board_views.ThreadList.as_view(), name = 'board_threads'),
     path('boards/<int:pk>/new/', board_views.NewThread.as_view(), name = 'new_thread'),
 
-    # post urls
-    path('boards/<int:pk>/threads/<int:thread_pk>/', board_views.PostList.as_view(), name = 'view_thread'),
-    path('boards/<int:pk>/threads/<int:thread_pk>/new_parent_post/', board_views.NewParentPost.as_view(), name = 'new_parent_post'),
-    path('boards/<int:pk>/threads/<int:thread_pk>/posts/<int:post_pk>/edit/', board_views.PostUpdate.as_view(), name = 'edit_post'),
+    # comment urls
+    path('boards/<int:pk>/threads/<int:thread_pk>/', board_views.CommentList.as_view(), name = 'view_thread'),
+    path('boards/<int:pk>/threads/<int:thread_pk>/new_parent_comment/', board_views.NewParentComment.as_view(), name = 'new_parent_comment'),
+    path('boards/<int:pk>/threads/<int:thread_pk>/comments/<int:comment_pk>/edit/', board_views.CommentUpdate.as_view(), name = 'edit_comment'),
 
     # account urls
     path('settings/account/', account_views.UserUpdate.as_view(), name='my_account'),

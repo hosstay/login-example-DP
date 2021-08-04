@@ -11,9 +11,9 @@
         <thead class="thead-dark">
             <tr>
                 <th>Board</th>
-                <th>Posts</th>
+                <th>Comments</th>
                 <th>Threads</th>
-                <th>Last Post</th>
+                <th>Last Comment</th>
             </tr>
         </thead>
         <tbody>
@@ -24,22 +24,22 @@
                     <small class="text-muted d-block">{{ board.description }}</small>
                 </td>
                 <td class="align-middle">
-                    {{ board.get_posts_count }}
+                    {{ board.get_comments_count }}
                 </td>
                 <td class="align-middle">
                     {{ board.threads.count }}
                 </td>
                 <td class="align-middle">
-                    {% with post=board.get_last_post %}
-                        {% if post %}
+                    {% with comment=board.get_last_comment %}
+                        {% if comment %}
                             <small>
-                                <a href="{% url 'view_thread' board.pk post.thread.pk %}">
-                                    {{ post.created_at|naturaltime }} by {{ post.created_by.username }}
+                                <a href="{% url 'view_thread' board.pk comment.thread.pk %}">
+                                    {{ comment.created_at|naturaltime }} by {{ comment.created_by.username }}
                                 </a>
                             </small>
                         {% else %}
                             <small class="text-muted">
-                                <em>No posts yet.</em>
+                                <em>No comments yet.</em>
                             </small>
                         {% endif %}
                     {% endwith %}

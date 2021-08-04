@@ -21,9 +21,9 @@
             <tr>
             <th>Thread</th>
             <th>Creator</th>
-            <th>Replies</th>
+            <th>Comments</th>
             <th>Views</th>
-            <th>Last Post</th>
+            <th>Last Comment</th>
             </tr>
         </thead>
         <tbody>
@@ -45,9 +45,9 @@
                         </small>
                     </td>
                     <td>{{ thread.creator.username }}</td>
-                    <td>{{ thread.replies }}</td>
+                    <td>{{ thread.comment_count }}</td>
                     <td>{{ thread.views }}</td>
-                    <td>{{ thread.last_post_at|naturaltime }}</td>
+                    <td>{{ thread.last_comment_at|naturaltime }}</td>
                 </tr>
             {% endfor %}
         </tbody>

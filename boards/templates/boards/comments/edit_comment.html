@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Edit post{% endblock %}
+{% block title %}Edit comment{% endblock %}
 
 {% block stylesheet %}
   <link rel="stylesheet" href="{% static 'css/simplemde.min.css' %}">
@@ -17,9 +17,9 @@
 
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'boards' %}">Boards</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'board_threads' post.thread.board.pk %}">{{ post.thread.board.name }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'view_thread' post.thread.board.pk post.thread.pk %}">{{ post.thread.title }}</a></li>
-  <li class="breadcrumb-item active">Edit post</li>
+  <li class="breadcrumb-item"><a href="{% url 'board_threads' comment.thread.board.pk %}">{{ comment.thread.board.name }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'view_thread' comment.thread.board.pk comment.thread.pk %}">{{ comment.thread.title }}</a></li>
+  <li class="breadcrumb-item active">Edit comment</li>
 {% endblock %}
 
 {% block content %}
@@ -27,6 +27,6 @@
     {% csrf_token %}
     {% include 'includes/form.html' %}
     <button type="submit" class="btn btn-success">Save changes</button>
-    <a href="{% url 'view_thread' post.thread.board.pk post.thread.pk %}" class="btn btn-outline-secondary" role="button">Cancel</a>
+    <a href="{% url 'view_thread' comment.thread.board.pk comment.thread.pk %}" class="btn btn-outline-secondary" role="button">Cancel</a>
   </form>
 {% endblock %}

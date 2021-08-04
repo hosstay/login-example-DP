@@ -14,17 +14,17 @@ class Board(models.Model):
     def __str__(self):
         return self.name
 
-    def get_posts_count(self):
-        return Post.objects.filter(thread__board=self).count()
+    def get_comments_count(self):
+        return Comment.objects.filter(thread__board=self).count()
 
-    def get_last_post(self):
-        return Post.objects.filter(thread__board=self).order_by('-created_at').first()
+    def get_last_comment(self):
+        return Comment.objects.filter(thread__board=self).order_by('-created_at').first()
 
 
 class Thread(models.Model):
     title = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    last_post_at = models.DateTimeField(auto_now_add=True)
+    last_comment_at = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='threads')
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='threads')
     views = models.PositiveIntegerField(default=0)
@@ -33,7 +33,7 @@ class Thread(models.Model):
         return self.title
 
     def get_page_count(self):
-        count = self.posts.count()
+        count = self.comments.count()
         pages = count / 2
         return math.ceil(pages)
 
@@ -48,19 +48,19 @@ class Thread(models.Model):
             return range(1, 5)
         return range(1, count + 1)
 
-    def get_last_ten_posts(self):
-        return self.posts.order_by('-created_at')[:10]
+    def get_last_ten_comments(self):
+        return self.comments.order_by('-created_at')[:10]
 
 
-class Post(models.Model):
+class Comment(models.Model):
     text = models.TextField(max_length=4000)
-    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='posts', null=True)
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='comments', null=True)
     is_master = models.BooleanField(default=False)
     parent = models.IntegerField(default=-1)
     children = ArrayField(models.PositiveIntegerField(), null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
 
     def __str__(self):
         truncated_text = Truncator(self.text)
