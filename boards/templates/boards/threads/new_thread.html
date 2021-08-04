@@ -2,7 +2,20 @@
 
 {% load widget_tweaks %}
 
+{% load static %}
+
 {% block title %}Start a New Thread{% endblock %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'css/simplemde.min.css' %}">
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'js/simplemde.min.js' %}"></script>
+  <script>
+    var simplemde = new SimpleMDE({element: document.getElementById('id_text')});
+  </script>
+{% endblock %}
 
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'boards' %}">Boards</a></li>
