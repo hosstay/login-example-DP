@@ -131,7 +131,6 @@ class PostUpdateView(UpdateView):
 
     def form_valid(self, form):
         post = form.save(commit = False)
-        post.updated_by = self.request.user
         post.updated_at = timezone.now()
         post.save()
         return redirect('view_thread', pk = post.thread.board.pk, thread_pk = post.thread.pk)
