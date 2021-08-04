@@ -59,7 +59,7 @@ def new_thread(request, pk):
         if form.is_valid():
             thread = form.save(commit = False)
             thread.board = board
-            thread.starter = request.user
+            thread.creator = request.user
             thread.save()
             
             Post.objects.create(

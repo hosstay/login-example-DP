@@ -47,7 +47,7 @@ board = Board.objects.get(name='Django')
 
 for i in range(40):
     title = f'Thread test #{i}'
-    thread = Thread.objects.create(title=title, board=board, starter=user)
+    thread = Thread.objects.create(title=title, board=board, creator=user)
 
     for j in range(40):
         Post.objects.create(message=f'Lorem ipsum...{j}', thread=thread, created_by=user)
