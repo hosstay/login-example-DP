@@ -5,12 +5,12 @@ from django.test import TestCase
 from django.urls import resolve, reverse
 
 from ..models import Board, Post, Thread
-from ..views import PostUpdateView
+from ..views import PostUpdate
 
 
-class PostUpdateViewTestCase(TestCase):
+class PostUpdateTestCase(TestCase):
     '''
-    Base test case to be used in all `PostUpdateView` view tests
+    Base test case to be used in all `PostUpdate` view tests
     '''
     def setUp(self):
         self.board = Board.objects.create(name='Django', description='Django board.')
@@ -26,14 +26,14 @@ class PostUpdateViewTestCase(TestCase):
         })
 
 
-class LoginRequiredPostUpdateViewTests(PostUpdateViewTestCase):
+class LoginRequiredPostUpdateTests(PostUpdateTestCase):
     def test_redirection(self):
         login_url = reverse('login')
         response = self.client.get(self.url)
         self.assertRedirects(response, '{login_url}?next={url}'.format(login_url=login_url, url=self.url))
 
 
-class UnauthorizedPostUpdateViewTests(PostUpdateViewTestCase):
+class UnauthorizedPostUpdateTests(PostUpdateTestCase):
     def setUp(self):
         super().setUp()
         username = 'jane'
@@ -50,7 +50,7 @@ class UnauthorizedPostUpdateViewTests(PostUpdateViewTestCase):
         self.assertEquals(self.response.status_code, 404)
 
 
-class PostUpdateViewTests(PostUpdateViewTestCase):
+class PostUpdateTests(PostUpdateTestCase):
     def setUp(self):
         super().setUp()
         self.client.login(username=self.username, password=self.password)
@@ -61,7 +61,7 @@ class PostUpdateViewTests(PostUpdateViewTestCase):
 
     def test_view_class(self):
         view = resolve('/boards/1/threads/1/posts/1/edit/')
-        self.assertEquals(view.func.view_class, PostUpdateView)
+        self.assertEquals(view.func.view_class, PostUpdate)
 
     def test_csrf(self):
         self.assertContains(self.response, 'csrfmiddlewaretoken')
@@ -78,7 +78,7 @@ class PostUpdateViewTests(PostUpdateViewTestCase):
         self.assertContains(self.response, '<textarea', 1)
 
 
-class SuccessfulPostUpdateViewTests(PostUpdateViewTestCase):
+class SuccessfulPostUpdateTests(PostUpdateTestCase):
     def setUp(self):
         super().setUp()
         self.client.login(username=self.username, password=self.password)
@@ -96,7 +96,7 @@ class SuccessfulPostUpdateViewTests(PostUpdateViewTestCase):
         self.assertEquals(self.post.text, 'edited text')
 
 
-class InvalidPostUpdateViewTests(PostUpdateViewTestCase):
+class InvalidPostUpdateTests(PostUpdateTestCase):
     def setUp(self):
         '''
         Submit an empty dictionary to the `new_parent_post` view

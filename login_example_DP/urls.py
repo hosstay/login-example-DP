@@ -72,16 +72,16 @@ urlpatterns = [
 
     # board urls
     # path('', board_views.boards, name = 'boards'),
-    path('', board_views.BoardListView.as_view(), name = 'boards'),
+    path('', board_views.BoardList.as_view(), name = 'boards'),
     # path('boards/<int:pk>/', board_views.board_threads, name = 'board_threads'),
-    path('boards/<int:pk>/', board_views.ThreadListView.as_view(), name = 'board_threads'),
+    path('boards/<int:pk>/', board_views.ThreadList.as_view(), name = 'board_threads'),
     path('boards/<int:pk>/new/', board_views.NewThread.as_view(), name = 'new_thread'),
 
     # post urls
-    path('boards/<int:pk>/threads/<int:thread_pk>/', board_views.PostListView.as_view(), name = 'view_thread'),
+    path('boards/<int:pk>/threads/<int:thread_pk>/', board_views.PostList.as_view(), name = 'view_thread'),
     path('boards/<int:pk>/threads/<int:thread_pk>/new_parent_post/', board_views.NewParentPost.as_view(), name = 'new_parent_post'),
-    path('boards/<int:pk>/threads/<int:thread_pk>/posts/<int:post_pk>/edit/', board_views.PostUpdateView.as_view(), name = 'edit_post'),
+    path('boards/<int:pk>/threads/<int:thread_pk>/posts/<int:post_pk>/edit/', board_views.PostUpdate.as_view(), name = 'edit_post'),
 
     # account urls
-    path('settings/account/', account_views.UserUpdateView.as_view(), name='my_account'),
+    path('settings/account/', account_views.UserUpdate.as_view(), name='my_account'),
 ]

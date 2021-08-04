@@ -1,7 +1,7 @@
 from django.urls import reverse, resolve
 from django.test import TestCase
 
-from ..views import ThreadListView
+from ..views import ThreadList
 from ..models import Board
 
 class BoardThreadsTests(TestCase):
@@ -21,7 +21,7 @@ class BoardThreadsTests(TestCase):
 
     def test_board_threads_url_resolves_board_threads_view(self):
         view = resolve('/boards/1/')
-        self.assertEquals(view.func.view_class, ThreadListView)
+        self.assertEquals(view.func.view_class, ThreadList)
 
     def test_board_threads_view_contains_link_back_to_boards(self):
         board_threads_url = reverse('board_threads', kwargs={'pk': self.board.pk})

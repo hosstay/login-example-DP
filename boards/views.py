@@ -14,7 +14,7 @@ from .models import Board, Thread, Post
 #     boards = Board.objects.all()    
 #     return render(request, 'boards.html', {'boards': boards})
 
-class BoardListView(ListView):
+class BoardList(ListView):
     model = Board
     context_object_name = 'boards'
     template_name = './boards/boards/boards.html'
@@ -35,7 +35,7 @@ class BoardListView(ListView):
 
 #     return render(request, 'threads.html', {'board': board, 'threads': threads})
 
-class ThreadListView(ListView):
+class ThreadList(ListView):
     model = Thread
     context_object_name = 'threads'
     template_name = './boards/threads/threads.html'
@@ -81,7 +81,7 @@ class NewThread(View):
     def get(self, request, pk):
         return self.render(request, pk)
 
-class PostListView(ListView):
+class PostList(ListView):
     model = Post
     context_object_name = 'posts'
     template_name = './boards/posts/view_thread.html'
@@ -134,7 +134,7 @@ class NewParentPost(View):
         return self.render(request, pk, thread_pk)
 
 @method_decorator(login_required, name = 'dispatch')
-class PostUpdateView(UpdateView):
+class PostUpdate(UpdateView):
     model = Post
     fields = ('text', )
     template_name = './boards/posts/edit_post.html'
