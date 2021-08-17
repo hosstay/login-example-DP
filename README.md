@@ -17,13 +17,11 @@ Webpage runs at localhost:8080
 
 ## Logging into database manually
 
-* get container id for db by finding it via 'sudo docker ps'
-* log into db with 'sudo docker exec -t -i \<container-id> psql -U postgres -d postgres'
+* log into db with 'sudo docker exec -ti login-example-dp_db_1 psql -U postgres -d postgres'
 
 ## Running the tests
 
-* get container id  for app by finding it via 'sudo docker ps'
-* run 'sudo docker exec -t -i \<container-id> python manage.py test'
+* run 'sudo docker exec -ti login-example-dp_web_1 python manage.py test'
 
 ## Test Data Generation
 
