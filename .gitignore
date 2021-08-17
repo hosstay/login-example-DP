@@ -7,3 +7,6 @@ venv/
 
 # docker db location
 /data
+
+# vs code
+.vscode
