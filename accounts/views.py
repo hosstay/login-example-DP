@@ -19,9 +19,8 @@ class Signup(View):
         form = SignUpForm(request.POST)
 
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('boards')
+            form.save()
+            return redirect('login')
 
         return self.render(request, form)
 
