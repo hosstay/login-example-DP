@@ -5,10 +5,13 @@ from django.views.generic import View, ListView, UpdateView
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.urls import reverse
+from django.db.models import Q
 # from django.core.paginator import Page, Paginator, EmptyPage, PageNotAnInteger
 
 from .forms import NewThreadForm, CommentForm
 from .models import Board, Thread, Comment
+
+from utility.utility import get_text_as_markdown
 
 # def boards(request):
 #     boards = Board.objects.all()    
@@ -85,9 +88,9 @@ class CommentList(ListView):
     model = Comment
     context_object_name = 'comments'
     template_name = './boards/comments/comment_list.html'
-    paginate_by = 2
 
     def get_context_data(self, **kwargs):
+        # if you haven't viewed this thread this session, then increase views.
         session_key = f'viewed_thread_{self.thread.pk}'
         if not self.request.session.get(session_key, False):
             self.thread.views += 1
@@ -100,7 +103,43 @@ class CommentList(ListView):
     def get_queryset(self):
         self.thread = get_object_or_404(Thread, board__pk = self.kwargs.get('pk'), pk = self.kwargs.get('thread_pk'))
         queryset = self.thread.comments.order_by('created_at')
-        return queryset
+
+        comments = []
+
+        def get_comment_data_from_queryset_obj(obj, layer=0):
+            children = queryset.filter(~Q(parent=-1)).filter(parent=obj.pk).order_by('created_at')
+
+            children_data = []
+
+            for c in children:
+                children_data.append(get_comment_data_from_queryset_obj(c, layer + 1))
+
+            return {
+                'pk': obj.pk,
+                'text': get_text_as_markdown(obj.text),
+                'parent': obj.parent,
+                'children': children_data,
+                'is_master': obj.is_master,
+                'created_by': {
+                    'username': obj.created_by.username,
+                    'comments_count': obj.created_by.comments.count()
+                },
+                'created_at': obj.created_at,
+                'thread': {
+                    'pk': obj.thread.pk,
+                    'board': {
+                        'pk': obj.thread.board.pk
+                    }
+                },
+                'layer': layer
+            }
+
+        for q in queryset:
+            comments.append(get_comment_data_from_queryset_obj(q))
+
+        # instead of returning a queryset it returns an array of dicts that act like the queryset for this specific situation
+        # this was done so the list of dicts of children could be generated for every comment chain.
+        return comments
 
 @method_decorator(login_required, name = 'dispatch')
 class NewParentComment(View):
@@ -108,7 +147,7 @@ class NewParentComment(View):
         form = form if form else CommentForm()
         thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
 
-        return render(request, './boards/comments/new_parent_comment.html', {'thread': thread, 'form': form})
+        return render(request, './boards/comments/new_comment.html', {'thread': thread, 'form': form})
 
     def post(self, request, pk, thread_pk):
         form = CommentForm(request.POST)
@@ -150,3 +189,35 @@ class EditComment(UpdateView):
         comment.updated_at = timezone.now()
         comment.save()
         return redirect('view_thread', pk = comment.thread.board.pk, thread_pk = comment.thread.pk)
+
+@method_decorator(login_required, name = 'dispatch')
+class ReplyComment(View):
+    def render(self, request, pk, thread_pk, comment_pk, form = None):
+        form = form if form else CommentForm()
+        thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
+
+        return render(request, './boards/comments/new_comment.html', {'thread': thread, 'form': form})
+
+    def post(self, request, pk, thread_pk, comment_pk):
+        form = CommentForm(request.POST)
+        thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
+
+        if form.is_valid():
+            comment = form.save(commit = False)
+            comment.thread = thread
+            comment.created_by = request.user
+            comment.parent = comment_pk
+            comment.save()
+
+            thread.last_comment_at = timezone.now()
+            thread.save()
+
+            thread_url = reverse('view_thread', kwargs = {'pk': pk, 'thread_pk': thread_pk})
+            thread_comment_url = f'{thread_url}?page={thread.get_page_count()}#{comment.pk}'
+
+            return redirect(thread_comment_url)
+
+        return self.render(request, pk, thread_pk, form)
+
+    def get(self, request, pk, thread_pk, comment_pk):
+        return self.render(request, pk, thread_pk, comment_pk)

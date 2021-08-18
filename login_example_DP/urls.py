@@ -81,6 +81,7 @@ urlpatterns = [
     path('boards/<int:pk>/threads/<int:thread_pk>/', board_views.CommentList.as_view(), name = 'view_thread'),
     path('boards/<int:pk>/threads/<int:thread_pk>/new_parent_comment/', board_views.NewParentComment.as_view(), name = 'new_parent_comment'),
     path('boards/<int:pk>/threads/<int:thread_pk>/comments/<int:comment_pk>/edit/', board_views.EditComment.as_view(), name = 'edit_comment'),
+    path('boards/<int:pk>/threads/<int:thread_pk>/comments/<int:comment_pk>/reply/', board_views.ReplyComment.as_view(), name = 'reply_comment'),
 
     # account urls
     path('settings/account/', account_views.EditUser.as_view(), name='my_account'),
