@@ -38,32 +38,23 @@ class SuccessfulSignUpTests(TestCase):
     def setUp(self):
         url = reverse('signup')
         data = {
-            'username': 'john',
-            'email': 'john@doe.com',
-            'password1': 'abcdef123456',
-            'password2': 'abcdef123456'
+            'username': 'johntesterman',
+            'email': 'johntesterman@doe.com',
+            'password1': 'Tester1!',
+            'password2': 'Tester1!'
         }
         self.response = self.client.post(url, data)
+        self.login_url = reverse('login')
         self.boards_url = reverse('boards')
 
     def test_redirection(self):
         '''
         A valid form submission should redirect the user to the boards page
         '''
-        self.assertRedirects(self.response, self.boards_url)
+        self.assertRedirects(self.response, self.login_url)
 
     def test_user_creation(self):
         self.assertTrue(User.objects.exists())
-
-    def test_user_authentication(self):
-        '''
-        Create a new request to an arbitrary page.
-        The resulting response should now have a `user` to its context,
-        after a successful sign up.
-        '''
-        response = self.client.get(self.boards_url)
-        user = response.context.get('user')
-        self.assertTrue(user.is_authenticated)
 
 class InvalidSignUpTests(TestCase):
     def setUp(self):
