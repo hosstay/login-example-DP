@@ -57,7 +57,6 @@ class Comment(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='comments', null=True)
     is_master = models.BooleanField(default=False)
     parent = models.IntegerField(default=-1)
-    children = ArrayField(models.PositiveIntegerField(), null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
