@@ -63,6 +63,7 @@ class NewThread(View):
 
     def post(self, request, pk):
         form = NewThreadForm(request.POST)
+
         board = get_object_or_404(Board, pk = pk)
 
         if form.is_valid():
@@ -84,27 +85,25 @@ class NewThread(View):
     def get(self, request, pk):
         return self.render(request, pk)
 
-class CommentList(ListView):
-    model = Comment
-    context_object_name = 'comments'
-    template_name = './boards/comments/comment_list.html'
-
-    def get_context_data(self, **kwargs):
+class CommentList(View):
+    def get(self, request, pk, thread_pk):
+        self.request = request
+        self.board_pk = pk
+        self.thread_pk = thread_pk
+        
+        self.thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
+        
         # if you haven't viewed this thread this session, then increase views.
-        session_key = f'viewed_thread_{self.thread.pk}'
+        session_key = f'viewed_thread_{self.thread_pk}'
         if not self.request.session.get(session_key, False):
             self.thread.views += 1
             self.thread.save()
             self.request.session[session_key] = True
 
-        kwargs['thread'] = self.thread
-        return super().get_context_data(**kwargs)
-
-    def get_queryset(self):
-        self.thread = get_object_or_404(Thread, board__pk = self.kwargs.get('pk'), pk = self.kwargs.get('thread_pk'))
+        # create obj list for template
         queryset = self.thread.comments.order_by('created_at')
 
-        comments = []
+        self.comments = []
 
         def get_comment_data_from_queryset_obj(obj, layer=0):
             children = queryset.filter(~Q(parent=-1)).filter(parent=obj.pk).order_by('created_at')
@@ -135,11 +134,9 @@ class CommentList(ListView):
             }
 
         for q in queryset:
-            comments.append(get_comment_data_from_queryset_obj(q))
+            self.comments.append(get_comment_data_from_queryset_obj(q))
 
-        # instead of returning a queryset it returns an array of dicts that act like the queryset for this specific situation
-        # this was done so the list of dicts of children could be generated for every comment chain.
-        return comments
+        return render(request, './boards/comments/comment_list.html', {'thread': self.thread, 'comments': self.comments})
 
 @method_decorator(login_required, name = 'dispatch')
 class NewParentComment(View):

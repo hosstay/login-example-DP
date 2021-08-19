@@ -2,45 +2,143 @@
 {% load humanize %}
 {% load comment_tags %}
 
-<div id="{{ comment.pk }}" 
-     class="card mb-2 {% if forloop.first and comment.parent == -1 %}border-dark{% endif %}"
-     style="margin-left: {{comment.layer | multiply:3}}vw">
-    {% if forloop.first and comment.parent == -1 %}
-        <div class="card-header text-white bg-dark py-2 px-3">{{ thread.title }}</div>
-    {% endif %}
-    <div class="card-body p-3">
-        <div class="row">
-            <div class="col-12">
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <strong class="text-muted">{{ comment.created_by.username }}</strong>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'js/utility.js' %}"></script>
+        <script>
+            async function upvote(event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                const src = event.target.getAttribute('src');
+                const original_src = event.target.getAttribute('orgsrc');
+                const alternative_src = event.target.getAttribute('altsrc');
+
+                let url;
+                if (src !== alternative_src) {
+                    url = `${location.protocol}//${window.location.hostname}:8080/api/comments/${event.target.id.substring(6)}/upvote/`;
+                } else {
+                    url = `${location.protocol}//${window.location.hostname}:8080/api/comments/${event.target.id.substring(6)}/downvote/`;
+                }
+
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({}),
+                    credentials: 'include',
+                    mode: 'cors'
+                });
+                let data = await response.json();
+
+                console.log(response);
+
+                if (src !== alternative_src) {
+                    event.target.setAttribute('src', alternative_src)
+                } else {
+                    event.target.setAttribute('src', original_src)
+                }
+            };
+
+            async function downvote(event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                const src = event.target.getAttribute('src');
+                const original_src = event.target.getAttribute('orgsrc');
+                const alternative_src = event.target.getAttribute('altsrc');
+
+                let url
+                if (src !== alternative_src) {
+                    url = `${location.protocol}//${window.location.hostname}:8080/api/comments/${event.target.id.substring(8)}/downvote/`;
+                } else {
+                    url = `${location.protocol}//${window.location.hostname}:8080/api/comments/${event.target.id.substring(8)}/upvote/`;
+                }
+
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({}),
+                    credentials: 'include',
+                    mode: 'cors'
+                });
+                let data = await response.json();
+
+                console.log(response);
+
+                if (src !== alternative_src) {
+                    event.target.setAttribute('src', alternative_src)
+                } else {
+                    event.target.setAttribute('src', original_src)
+                }
+            };
+        </script>
+    </head>
+    <body>
+        <div id="{{ comment.pk }}" 
+            class="card mb-2 {% if forloop.first and comment.parent == -1 %}border-dark{% endif %}"
+            style="margin-left: {{comment.layer | multiply:3}}vw">
+            {% if forloop.first and comment.parent == -1 %}
+                <div class="card-header text-white bg-dark py-2 px-3">{{ thread.title }}</div>
+            {% endif %}
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-1">
+                        {% if comment.is_master == False %}
+                            <img id="upvote{{comment.pk}}" 
+                                 onclick="upvote(event)" 
+                                 src="{% static 'img/up-arrow.png' %}" 
+                                 orgsrc="{% static 'img/up-arrow.png' %}"
+                                 altsrc="{% static 'img/up-arrow-orange.png' %}" 
+                                 class="w-100">
+                            <img id="downvote{{comment.pk}}" 
+                                 onclick="downvote(event)" 
+                                 src="{% static 'img/down-arrow.png' %}" 
+                                 orgsrc="{% static 'img/down-arrow.png' %}"
+                                 altsrc="{% static 'img/down-arrow-blue.png' %}" 
+                                 class="w-100">
+                        {% endif %}
                     </div>
-                    <div class="col-6 text-right">
-                        <small class="text-muted">{{ comment.created_at|naturaltime }}</small>
+                    <div class="col-11">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong class="text-muted">{{ comment.created_by.username }}</strong>
+                            </div>
+                            <div class="col-6 text-right">
+                                <small class="text-muted">{{ comment.created_at|naturaltime }}</small>
+                            </div>
+                        </div>
+                        {{ comment.text }}
+                        {% if comment.created_by == user %}
+                            <div class="mt-3">
+                                <a href="{% url 'edit_comment' comment.thread.board.pk comment.thread.pk comment.pk %}" 
+                                class="btn btn-primary btn-sm" 
+                                role="button">Edit</a>
+                            </div>
+                        {% else %}
+                            {% if comment.is_master == False %}
+                                <div class="mt-3">
+                                    <a href="{% url 'reply_comment' comment.thread.board.pk comment.thread.pk comment.pk %}" 
+                                    class="btn btn-primary btn-sm" 
+                                    role="button">Reply</a>
+                                </div>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
-                {{ comment.text }}
-                {% if comment.created_by == user %}
-                    <div class="mt-3">
-                        <a href="{% url 'edit_comment' comment.thread.board.pk comment.thread.pk comment.pk %}" 
-                        class="btn btn-primary btn-sm" 
-                        role="button">Edit</a>
-                    </div>
-                {% else %}
-                    {% if comment.is_master == False %}
-                        <div class="mt-3">
-                            <a href="{% url 'reply_comment' comment.thread.board.pk comment.thread.pk comment.pk %}" 
-                            class="btn btn-primary btn-sm" 
-                            role="button">Reply</a>
-                        </div>
-                    {% endif %}
-                {% endif %}
             </div>
         </div>
-    </div>
-</div>
-{% if comment.children|length > 0 %}
-    {% for child in comment.children %}
-        {% include "includes/comment_card.html" with comment=child %}
-    {% endfor %}
-{% endif %}
+        {% if comment.children|length > 0 %}
+            {% for child in comment.children %}
+                {% include "includes/comment_card.html" with comment=child %}
+            {% endfor %}
+        {% endif %}
+    </body>
+</html>

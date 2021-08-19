@@ -60,6 +60,7 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    karma = models.IntegerField(default=0)
 
     def __str__(self):
         truncated_text = Truncator(self.text)

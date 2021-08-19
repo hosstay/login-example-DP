@@ -1,21 +1,5 @@
-"""login_example_DP URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
 from django.urls import path
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
@@ -70,19 +54,14 @@ urlpatterns = [
         name = 'password_change_done'
     ),
 
-    # board urls
-    # path('', board_views.boards, name = 'boards'),
-    path('', board_views.BoardList.as_view(), name = 'boards'),
-    # path('boards/<int:pk>/', board_views.board_threads, name = 'board_threads'),
-    path('boards/<int:pk>/', board_views.ThreadList.as_view(), name = 'board_threads'),
-    path('boards/<int:pk>/new/', board_views.NewThread.as_view(), name = 'new_thread'),
-
-    # comment urls
-    path('boards/<int:pk>/threads/<int:thread_pk>/', board_views.CommentList.as_view(), name = 'view_thread'),
-    path('boards/<int:pk>/threads/<int:thread_pk>/new_parent_comment/', board_views.NewParentComment.as_view(), name = 'new_parent_comment'),
-    path('boards/<int:pk>/threads/<int:thread_pk>/comments/<int:comment_pk>/edit/', board_views.EditComment.as_view(), name = 'edit_comment'),
-    path('boards/<int:pk>/threads/<int:thread_pk>/comments/<int:comment_pk>/reply/', board_views.ReplyComment.as_view(), name = 'reply_comment'),
-
     # account urls
     path('settings/account/', account_views.EditUser.as_view(), name='my_account'),
+
+    # BOARDS
+    path('', board_views.BoardList.as_view(), name = 'boards'),
+    path('boards/', include('boards.urls')),
+
+    # API
+    path('api/', include('api.urls')),
+    #path('boards/<int:pk>/threads/<int:thread_pk>/comments/<int:comment_pk>/upvote', meme(), name = 'upvote_comment')
 ]
