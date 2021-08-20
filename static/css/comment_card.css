@@ -1,0 +1,20 @@
+#vote-box {
+    -webkit-box-flex: 0; 
+    flex: 0 0 6%; 
+    max-width: 6%; 
+    margin-top: 1%; 
+    width: 100%; 
+    min-height: 1px; 
+    padding-right: 15px; 
+    padding-left: 15px;
+}
+
+#main-body-box {
+    -webkit-box-flex: 0; 
+    flex: 0 0 94%; 
+    max-width: 94%; 
+    width: 100%; 
+    min-height: 1px; 
+    padding-right: 15px; 
+    padding-left: 15px;
+}

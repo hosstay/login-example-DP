@@ -5,6 +5,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="{% static 'css/comment_card.css' %}">
         <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
         <script src="{% static 'js/utility.js' %}"></script>
         <script>
@@ -90,29 +91,29 @@
             {% endif %}
             <div class="card-body p-3">
                 <div class="row">
-                    <div class="col-1">
+                    <div id="vote-box">
                         {% if comment.is_master == False %}
-                            <img id="upvote{{comment.pk}}" 
-                                 onclick="upvote(event)" 
-                                 src="{% static 'img/up-arrow.png' %}" 
+                            <img id="upvote{{comment.pk}}"
+                                 style="width: 100%; margin-bottom: 20%;"
+                                 onclick="upvote(event)"
+                                 src="{% static 'img/up-arrow.png' %}"
                                  orgsrc="{% static 'img/up-arrow.png' %}"
-                                 altsrc="{% static 'img/up-arrow-orange.png' %}" 
-                                 class="w-100">
-                            <img id="downvote{{comment.pk}}" 
-                                 onclick="downvote(event)" 
-                                 src="{% static 'img/down-arrow.png' %}" 
+                                 altsrc="{% static 'img/up-arrow-orange.png' %}">
+                            <img id="downvote{{comment.pk}}"
+                                 style="width: 100%; margin-top: 20%;"
+                                 onclick="downvote(event)"
+                                 src="{% static 'img/down-arrow.png' %}"
                                  orgsrc="{% static 'img/down-arrow.png' %}"
-                                 altsrc="{% static 'img/down-arrow-blue.png' %}" 
-                                 class="w-100">
+                                 altsrc="{% static 'img/down-arrow-blue.png' %}">
                         {% endif %}
                     </div>
-                    <div class="col-11">
+                    <div id="main-body-box">
                         <div class="row mb-3">
-                            <div class="col-6">
+                            <div class="pl-3">
                                 <strong class="text-muted">{{ comment.created_by.username }}</strong>
                             </div>
-                            <div class="col-6 text-right">
-                                <small class="text-muted">{{ comment.created_at|naturaltime }}</small>
+                            <div class="w-50">
+                                <small style="margin-left: 10%" class="text-muted">{{ comment.karma }} points &nbsp;&nbsp;&nbsp;&nbsp;{{ comment.created_at|naturaltime }}</small>
                             </div>
                         </div>
                         {{ comment.text }}

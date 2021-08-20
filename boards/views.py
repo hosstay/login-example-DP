@@ -130,6 +130,7 @@ class CommentList(View):
                         'pk': obj.thread.board.pk
                     }
                 },
+                'karma': obj.karma,
                 'layer': layer
             }
 
