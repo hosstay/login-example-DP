@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.text import Truncator
 from django.utils.html import mark_safe
 from markdown import markdown
@@ -68,3 +70,20 @@ class Comment(models.Model):
 
     def get_text_as_markdown(self):
         return mark_safe(markdown(self.text, safe_mode='escape'))
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    comments_upvoted = ArrayField(models.PositiveIntegerField(), null=True)
+    comments_downvoted = ArrayField(models.PositiveIntegerField(), null=True)
+
+    def __str__(self):
+        return f"{{\n\tuser: {self.user},\n\tcomments_upvoted: {self.comments_upvoted},\n\tcomments_downvoted: {self.comments_downvoted}\n}}"
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

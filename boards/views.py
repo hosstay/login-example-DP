@@ -121,17 +121,25 @@ class CommentList(View):
                 'is_master': obj.is_master,
                 'created_by': {
                     'username': obj.created_by.username,
-                    'comments_count': obj.created_by.comments.count()
+                    'comments_count': obj.created_by.comments.count(),
                 },
                 'created_at': obj.created_at,
                 'thread': {
                     'pk': obj.thread.pk,
                     'board': {
-                        'pk': obj.thread.board.pk
+                        'pk': obj.thread.board.pk,
                     }
                 },
                 'karma': obj.karma,
-                'layer': layer
+                'layer': layer,
+                'logged_in_user': {
+                    'name': self.request.user.username,
+                    'id': self.request.user.id,
+                    'profile': {
+                        'comments_upvoted': self.request.user.profile.comments_upvoted,
+                        'comments_downvoted': self.request.user.profile.comments_downvoted,
+                    }
+                }
             }
 
         for q in queryset:

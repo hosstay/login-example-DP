@@ -13,15 +13,26 @@
                 event.preventDefault();
                 event.stopImmediatePropagation();
 
-                const src = event.target.getAttribute('src');
-                const original_src = event.target.getAttribute('orgsrc');
-                const alternative_src = event.target.getAttribute('altsrc');
+                const commentId = parseInt(event.target.getAttribute('id').replace(/(upvote|downvote)/, ``));
+
+                const upvoteElement = document.getElementById(`upvote${commentId}`);
+                const src = upvoteElement.getAttribute('src');
+                const original_src = upvoteElement.getAttribute('orgsrc');
+                const alternative_src = upvoteElement.getAttribute('altsrc');
+
+                const downvoteElement = document.getElementById(`downvote${commentId}`);
+                const downvote_original_src = downvoteElement.getAttribute('orgsrc');
+
+                let loggedinuser = event.target.getAttribute('loggedinuser');
+                loggedinuser = loggedinuser.replaceAll(`'`, `"`);
+                loggedinuser = loggedinuser.replaceAll(`None`, `null`);
+                loggedinuser = JSON.parse(loggedinuser);
 
                 let url;
                 if (src !== alternative_src) {
-                    url = `${location.protocol}//${window.location.hostname}:8080/api/comments/${event.target.id.substring(6)}/upvote/`;
+                    url = `${location.protocol}//${window.location.hostname}:8080/api/user/${loggedinuser.id}/comment/${event.target.id.substring(6)}/upvote/`;
                 } else {
-                    url = `${location.protocol}//${window.location.hostname}:8080/api/comments/${event.target.id.substring(6)}/downvote/`;
+                    url = `${location.protocol}//${window.location.hostname}:8080/api/user/${loggedinuser.id}/comment/${event.target.id.substring(6)}/undo/upvote/`;
                 }
 
                 const response = await fetch(url, {
@@ -39,25 +50,70 @@
                 console.log(response);
 
                 if (src !== alternative_src) {
-                    event.target.setAttribute('src', alternative_src)
+                    upvoteElement.setAttribute('src', alternative_src)
+                    downvoteElement.setAttribute('src', downvote_original_src)
                 } else {
-                    event.target.setAttribute('src', original_src)
+                    upvoteElement.setAttribute('src', original_src)
                 }
+            };
+
+            function setupSrc(event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                const commentId = parseInt(event.target.getAttribute('id').replace(/(upvote|downvote)/, ``));
+
+                const upvoteElement = document.getElementById(`upvote${commentId}`);
+                const upvote_original_src = upvoteElement.getAttribute('orgsrc');
+                const upvote_alternative_src = upvoteElement.getAttribute('altsrc');
+
+                const downvoteElement = document.getElementById(`downvote${commentId}`);
+                const downvote_original_src = downvoteElement.getAttribute('orgsrc');
+                const downvote_alternative_src = downvoteElement.getAttribute('altsrc');
+
+                let loggedinuser = event.target.getAttribute('loggedinuser');
+                loggedinuser = loggedinuser.replaceAll(`'`, `"`);
+                loggedinuser = loggedinuser.replaceAll(`None`, `null`);
+                loggedinuser = JSON.parse(loggedinuser);
+
+                if (upvoteElement.getAttribute('src') !== upvote_alternative_src &&
+                    loggedinuser.profile.comments_upvoted != null && 
+                    loggedinuser.profile.comments_upvoted.includes(commentId)) {
+                    upvoteElement.setAttribute('src', upvote_alternative_src);
+                } else if (downvoteElement.getAttribute('src') !== downvote_alternative_src &&
+                           loggedinuser.profile.comments_downvoted != null && 
+                           loggedinuser.profile.comments_downvoted.includes(commentId)) {
+                    downvoteElement.setAttribute('src', downvote_alternative_src);
+                }
+
+                // get rid of the onload event so it doesn't proc every time the src is changed during upvotes/downvotes
+                upvoteElement.setAttribute('onload', () => {});
             };
 
             async function downvote(event) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
 
-                const src = event.target.getAttribute('src');
-                const original_src = event.target.getAttribute('orgsrc');
-                const alternative_src = event.target.getAttribute('altsrc');
+                const commentId = parseInt(event.target.getAttribute('id').replace(/(upvote|downvote)/, ``));
+
+                const downvoteElement = document.getElementById(`downvote${commentId}`);
+                const src = downvoteElement.getAttribute('src');
+                const original_src = downvoteElement.getAttribute('orgsrc');
+                const alternative_src = downvoteElement.getAttribute('altsrc');
+
+                const upvoteElement = document.getElementById(`upvote${commentId}`);
+                const upvote_original_src = upvoteElement.getAttribute('orgsrc');
+
+                let loggedinuser = event.target.getAttribute('loggedinuser');
+                loggedinuser = loggedinuser.replaceAll(`'`, `"`);
+                loggedinuser = loggedinuser.replaceAll(`None`, `null`);
+                loggedinuser = JSON.parse(loggedinuser);
 
                 let url
                 if (src !== alternative_src) {
-                    url = `${location.protocol}//${window.location.hostname}:8080/api/comments/${event.target.id.substring(8)}/downvote/`;
+                    url = `${location.protocol}//${window.location.hostname}:8080/api/user/${loggedinuser.id}/comment/${event.target.id.substring(8)}/downvote/`;
                 } else {
-                    url = `${location.protocol}//${window.location.hostname}:8080/api/comments/${event.target.id.substring(8)}/upvote/`;
+                    url = `${location.protocol}//${window.location.hostname}:8080/api/user/${loggedinuser.id}/comment/${event.target.id.substring(8)}/undo/downvote/`;
                 }
 
                 const response = await fetch(url, {
@@ -75,9 +131,10 @@
                 console.log(response);
 
                 if (src !== alternative_src) {
-                    event.target.setAttribute('src', alternative_src)
+                    downvoteElement.setAttribute('src', alternative_src)
+                    upvoteElement.setAttribute('src', upvote_original_src)
                 } else {
-                    event.target.setAttribute('src', original_src)
+                    downvoteElement.setAttribute('src', original_src)
                 }
             };
         </script>
@@ -96,15 +153,18 @@
                             <img id="upvote{{comment.pk}}"
                                  style="width: 100%; margin-bottom: 20%;"
                                  onclick="upvote(event)"
+                                 onload="setupSrc(event)"
                                  src="{% static 'img/up-arrow.png' %}"
                                  orgsrc="{% static 'img/up-arrow.png' %}"
-                                 altsrc="{% static 'img/up-arrow-orange.png' %}">
+                                 altsrc="{% static 'img/up-arrow-orange.png' %}"
+                                 loggedinuser="{{comment.logged_in_user}}">
                             <img id="downvote{{comment.pk}}"
                                  style="width: 100%; margin-top: 20%;"
                                  onclick="downvote(event)"
                                  src="{% static 'img/down-arrow.png' %}"
                                  orgsrc="{% static 'img/down-arrow.png' %}"
-                                 altsrc="{% static 'img/down-arrow-blue.png' %}">
+                                 altsrc="{% static 'img/down-arrow-blue.png' %}"
+                                 loggedinuser="{{comment.logged_in_user}}">
                         {% endif %}
                     </div>
                     <div id="main-body-box">
