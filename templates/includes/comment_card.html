@@ -220,9 +220,11 @@
                         </div>
                         {{ comment.text }}
                         <div class="row pl-3">
-                            <a style="text-decoration: none; color: #6c757d;" 
-                               href="{% url 'view_comment' thread.board.pk thread.pk comment.pk %}">permalink</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            {% if comment.is_master == False %}
+                                <a style="text-decoration: none; color: #6c757d;" 
+                                href="{% url 'view_comment' thread.board.pk thread.pk comment.pk %}">permalink</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                            {% endif %}
                             {% if comment.parent != -1 %}
                                 <a style="text-decoration: none; color: #6c757d;" 
                                    href="{% url 'view_comment' thread.board.pk thread.pk comment.parent %}">parent</a>
