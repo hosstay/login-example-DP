@@ -322,7 +322,9 @@ class ViewComment(View):
             if (q.id == comment_pk):
                 comment_data = get_comment_data_from_queryset_obj(q)
                 
-                # trick comment_list template into behaving like this linked comment is the top level parent.
+                # trick comment_list template into behaving like this linked comment is the top level parent,
+                # but save off parent so it can be referenced for the parent link
+                comment_data["old_parent"] = comment_data["parent"]
                 comment_data["parent"] = -1
                 
                 self.comments.append(comment_data)

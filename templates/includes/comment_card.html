@@ -223,6 +223,15 @@
                             <a style="text-decoration: none; color: #6c757d;" 
                                href="{% url 'view_comment' thread.board.pk thread.pk comment.pk %}">permalink</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;
+                            {% if comment.parent != -1 %}
+                                <a style="text-decoration: none; color: #6c757d;" 
+                                   href="{% url 'view_comment' thread.board.pk thread.pk comment.parent %}">parent</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                            {% elif comment.old_parent and comment.old_parent != -1 %}
+                                <a style="text-decoration: none; color: #6c757d;" 
+                                   href="{% url 'view_comment' thread.board.pk thread.pk comment.old_parent %}">parent</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                            {% endif %}
                             {% if comment.created_by.username == user.username %}
                                 <a style="text-decoration: none; color: #6c757d;"
                                    onclick="showEdit(event, {{comment.pk}})">Edit</a>
