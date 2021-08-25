@@ -137,6 +137,42 @@
                     downvoteElement.setAttribute('src', original_src)
                 }
             };
+
+            function showReply(event, commentPk) {
+                document.getElementById(`iframe-reply-${commentPk}`).setAttribute('src', document.getElementById(`iframe-reply-${commentPk}`).getAttribute('dsrc'));
+                document.getElementById(`hidden-reply-${commentPk}`).style.display = 'block';
+            }
+
+            function showEdit(event, commentPk) {
+                document.getElementById(`iframe-edit-${commentPk}`).setAttribute('src', document.getElementById(`iframe-edit-${commentPk}`).getAttribute('dsrc'));
+                document.getElementById(`hidden-edit-${commentPk}`).style.display = 'block';
+            }
+
+            function hideReply(event) {
+                let commentPk = event.target.parentElement.action.match(/comments\/([\d]*)\/reply\//)[1];
+                console.log(commentPk);
+                document.getElementById(`hidden-reply-${commentPk}`).style.display = 'none';
+            }
+
+            function hideReplyAndRefresh(event) {
+                setTimeout(() => {
+                    hideReply(event);
+                    location.reload();
+                }, 500);
+            }
+
+            function hideEdit(event) {
+                let commentPk = event.target.parentElement.action.match(/comments\/([\d]*)\/edit\//)[1];
+                console.log(commentPk);
+                document.getElementById(`hidden-edit-${commentPk}`).style.display = 'none';
+            }
+
+            function hideEditAndRefresh(event) {
+                setTimeout(() => {
+                    hideEdit(event);
+                    location.reload();
+                }, 500);
+            }
         </script>
     </head>
     <body>
@@ -173,28 +209,42 @@
                                 <strong class="text-muted">{{ comment.created_by.username }}</strong>
                             </div>
                             <div class="w-50">
-                                <small style="margin-left: 10%" class="text-muted">{{ comment.karma }} points &nbsp;&nbsp;&nbsp;&nbsp;{{ comment.created_at|naturaltime }}</small>
+                                <small 
+                                    style="margin-left: 10%" 
+                                    class="text-muted">
+                                    {{ comment.karma }} points 
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    {{ comment.created_at|naturaltime }}
+                                </small>
                             </div>
                         </div>
                         {{ comment.text }}
-                        {% if comment.created_by == user %}
-                            <div class="mt-3">
-                                <a href="{% url 'edit_comment' comment.thread.board.pk comment.thread.pk comment.pk %}" 
-                                class="btn btn-primary btn-sm" 
-                                role="button">Edit</a>
-                            </div>
-                        {% else %}
-                            {% if comment.is_master == False %}
-                                <div class="mt-3">
-                                    <a href="{% url 'reply_comment' comment.thread.board.pk comment.thread.pk comment.pk %}" 
-                                    class="btn btn-primary btn-sm" 
-                                    role="button">Reply</a>
-                                </div>
+                        <div class="row pl-3">
+                            <a style="text-decoration: none; color: #6c757d;" 
+                               href="{% url 'view_comment' thread.board.pk thread.pk comment.pk %}">permalink</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            {% if comment.created_by.username == user.username %}
+                                <a style="text-decoration: none; color: #6c757d;"
+                                   onclick="showEdit(event, {{comment.pk}})">Edit</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
                             {% endif %}
-                        {% endif %}
+                            {% if comment.is_master == False %}
+                                <a style="text-decoration: none; color: inherit;" 
+                                   onclick="showReply(event, {{comment.pk}})">Reply</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="hidden-reply-{{comment.pk}}" style="display: none; margin-left: {{comment.layer | multiply:3}}vw;">
+            <iframe id="iframe-reply-{{comment.pk}}" dsrc="{% url 'reply_comment' comment.thread.board.pk comment.thread.pk comment.pk %}" 
+                style="height: 50vh; width: 75%;"></iframe>
+        </div>
+        <div id="hidden-edit-{{comment.pk}}" style="display: none; margin-left: {{comment.layer | multiply:3}}vw;">
+            <iframe id="iframe-edit-{{comment.pk}}" dsrc="{% url 'edit_comment' comment.thread.board.pk comment.thread.pk comment.pk %}" 
+                style="height: 50vh; width: 75%;"></iframe>
         </div>
         {% if comment.children|length > 0 %}
             {% for child in comment.children %}

@@ -5,7 +5,7 @@
 {% block breadcrumb %}
     <li class="breadcrumb-item"><a href="{% url 'boards' %}">Boards</a></li>
     <li class="breadcrumb-item"><a href="{% url 'board_threads' thread.board.pk %}">{{ thread.board.name }}</a></li>
-    <li class="breadcrumb-item active">{{ thread.title }}</li>
+    <li class="breadcrumb-item active"><a href="{% url 'view_thread' thread.board.pk thread.pk %}">{{ thread.title }}</a></li>
 {% endblock %}
 
 {% block content %}
