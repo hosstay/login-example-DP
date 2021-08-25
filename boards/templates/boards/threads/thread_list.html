@@ -34,15 +34,6 @@
                         <p class="mb-0">
                             <a href="{{ thread_url }}">{{ thread.title }}</a>
                         </p>
-                        <small class="text-muted">
-                            Pages:
-                            {% for i in thread.get_page_range %}
-                                <a href="{{ thread_url }}?page={{ i }}">{{ i }}</a>
-                            {% endfor %}
-                            {% if thread.has_many_pages %}
-                                ... <a href="{{ thread_url }}?page={{ thread.get_page_count }}">Last Page</a>
-                            {% endif %}
-                        </small>
                     </td>
                     <td>{{ thread.creator.username }}</td>
                     <td>{{ thread.comment_count }}</td>
