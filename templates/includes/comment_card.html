@@ -212,8 +212,10 @@
                                 <small 
                                     style="margin-left: 10%" 
                                     class="text-muted">
-                                    {{ comment.karma }} points 
-                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% if comment.is_master == False %}
+                                        {{ comment.karma }} points 
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% endif %}
                                     {{ comment.created_at|naturaltime }}
                                 </small>
                             </div>
