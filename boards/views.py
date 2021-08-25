@@ -155,7 +155,7 @@ class NewParentComment(View):
         form = form if form else CommentForm()
         thread = get_object_or_404(Thread, board__pk = pk, pk = thread_pk)
 
-        return render(request, './boards/comments/new_comment.html', {'thread': thread, 'form': form})
+        return render(request, './boards/comments/new_parent_comment.html', {'thread': thread, 'form': form})
 
     def post(self, request, pk, thread_pk):
         form = CommentForm(request.POST)
