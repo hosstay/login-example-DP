@@ -1,0 +1,46 @@
+#nav-bar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    background-color: #333;
+    height: 6vh;
+}
+
+#nav-bar li {
+    float: left;
+}
+
+#nav-bar li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.dropdown-item {
+    padding: 0px !important;
+}
+
+.dropdown {
+    padding-top: 8px;
+}
+
+#nav-bar li a:hover {
+    background-color: #111;
+}
+
+#nav-bar li a img {
+    width: 16px;
+    height: 16px;
+}
+
+#dropdown-menu {
+    background-color: #666;
+}
+
+.dropdown-li {
+    float: right !important;
+    margin-right: 1vw;
+}

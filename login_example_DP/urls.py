@@ -3,7 +3,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
-from boards import views as board_views
+from home import views as home_views
 from accounts import views as account_views
 
 # remember to end each path with a '/' so it works with 'resolve(/path/)' in tests
@@ -12,7 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # auth urls
-    path('signup/', account_views.Signup.as_view(), name = 'signup'),
+    path('register/', account_views.Register.as_view(), name = 'register'),
     path('login/', auth_views.LoginView.as_view(template_name='./accounts/login/login.html'), name = 'login'),
     path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),
 
@@ -58,10 +58,11 @@ urlpatterns = [
     path('settings/account/', account_views.EditUser.as_view(), name='my_account'),
 
     # BOARDS
-    path('', board_views.BoardList.as_view(), name = 'boards'),
     path('boards/', include('boards.urls')),
 
     # API
     path('api/', include('api.urls')),
-    #path('boards/<int:pk>/threads/<int:thread_pk>/comments/<int:comment_pk>/upvote', meme(), name = 'upvote_comment')
+
+    # HOME
+    path('', include('home.urls')),
 ]

@@ -2,27 +2,27 @@ from django.contrib.auth.models import User
 from django.urls import reverse, resolve
 from django.test import TestCase
 
-from ..views import Signup
-from ..forms import SignUpForm
+from ..views import Register
+from ..forms import RegisterForm
 
-class SignUpTests(TestCase):
+class RegisterTests(TestCase):
     def setUp(self):
-        url = reverse('signup')
+        url = reverse('register')
         self.response = self.client.get(url)
 
-    def test_signup_status_code(self):
+    def test_register_status_code(self):
         self.assertEquals(self.response.status_code, 200)
 
-    def test_signup_url_resolves_signup_view(self):
-        view = resolve('/signup/')
-        self.assertEquals(view.func.view_class, Signup)
+    def test_register_url_resolves_register_view(self):
+        view = resolve('/register/')
+        self.assertEquals(view.func.view_class, Register)
 
     def test_csrf(self):
         self.assertContains(self.response, 'csrfmiddlewaretoken')
 
     def test_contains_form(self):
         form = self.response.context.get('form')
-        self.assertIsInstance(form, SignUpForm)
+        self.assertIsInstance(form, RegisterForm)
 
     def test_form_inputs(self):
         '''
@@ -34,9 +34,9 @@ class SignUpTests(TestCase):
         self.assertContains(self.response, 'type="email"', 1)
         self.assertContains(self.response, 'type="password"', 2)
 
-class SuccessfulSignUpTests(TestCase):
+class SuccessfulRegisterTests(TestCase):
     def setUp(self):
-        url = reverse('signup')
+        url = reverse('register')
         data = {
             'username': 'johntesterman',
             'email': 'johntesterman@doe.com',
@@ -56,12 +56,12 @@ class SuccessfulSignUpTests(TestCase):
     def test_user_creation(self):
         self.assertTrue(User.objects.exists())
 
-class InvalidSignUpTests(TestCase):
+class InvalidRegisterTests(TestCase):
     def setUp(self):
-        url = reverse('signup')
+        url = reverse('register')
         self.response = self.client.post(url, {})  # submit an empty dictionary
 
-    def test_signup_status_code(self):
+    def test_register_status_code(self):
         '''
         An invalid form submission should return to the same page
         '''

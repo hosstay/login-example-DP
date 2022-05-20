@@ -1,6 +1,6 @@
 {% extends '../base_accounts.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block body %}
 <form id="auth-div" method="post" novalidate>
@@ -10,12 +10,9 @@
   <br />
 
   {% include 'includes/login_form.html' %}
-  <button type="submit" style="width: 100%;" class="btn btn-primary btn-block">Log in</button>
+  <button type="submit" style="width: 100%;" class="btn btn-primary btn-block">Create an account</button>
   <div class="card-footer text-muted text-center">
-    New? <a href="{% url 'register' %}">Register</a>
+    Already have an account? <a href="{% url 'login' %}">Log in</a>
   </div>
-  <small>
-    <a href="{% url 'password_reset' %}" class="text-muted">Forgot your password?</a>
-  </small>
 </form>
 {% endblock body %}

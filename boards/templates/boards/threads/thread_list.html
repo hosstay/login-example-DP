@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends '../base_boards.html' %}
 
 {% load humanize %}
 
@@ -11,7 +11,7 @@
     <li class="breadcrumb-item active">{{ board.name }}</li>
 {% endblock %}
 
-{% block content %}
+{% block boardcontent %}
     <div class="mb-4">
         <a href="{% url 'new_thread' board.pk %}" class="btn btn-primary">New thread</a>
     </div>

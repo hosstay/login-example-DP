@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Name{% endblock %}
+
+{% block javascript %}
+    <script>
+        function submit(event) {
+            console.log(event);
+            const value = document.getElementById('input').value;
+            document.getElementById('output').innerHTML = `${value} is awesome!`;
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <label>Enter Name:</label>
+    <input id='input'></input>
+    <br />
+    <br />
+
+    <input type="button" value="Submit" onclick="submit(event)">
+    <br />
+
+    <p id="output"></p>
+{% endblock content %}

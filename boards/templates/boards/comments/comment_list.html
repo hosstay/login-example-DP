@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends '../base_boards.html' %}
 
 {% block title %}{{ thread.title }}{% endblock %}
 
@@ -8,7 +8,7 @@
     <li class="breadcrumb-item active"><a href="{% url 'view_thread' thread.board.pk thread.pk %}">{{ thread.title }}</a></li>
 {% endblock %}
 
-{% block content %}
+{% block boardcontent %}
 
     <div class="mb-4">
         <a href="{% url 'new_parent_comment' thread.board.pk thread.pk %}" class="btn btn-primary" role="button">Submit Comment</a>

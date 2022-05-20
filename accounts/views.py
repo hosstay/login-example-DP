@@ -8,15 +8,15 @@ from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.views.generic import View, UpdateView
 
-from .forms import SignUpForm
+from .forms import RegisterForm
 
-class Signup(View):
+class Register(View):
     def render(self, request, form = None):
-        form = form if form else SignUpForm()
-        return render(request, './accounts/signup/signup.html', {'form': form})
+        form = form if form else RegisterForm()
+        return render(request, './accounts/register/register.html', {'form': form})
 
     def post(self, request):
-        form = SignUpForm(request.POST)
+        form = RegisterForm(request.POST)
 
         if form.is_valid():
             form.save()

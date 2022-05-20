@@ -1,17 +1,19 @@
-{% extends 'base.html' %}
-
-{% load static %}
-
-{% block stylesheet %}
-  <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
-{% endblock %}
-
-{% block body %}
-  <div class="container">
-    <h1 class="text-center logo my-4">
-      <a href="{% url 'boards' %}">Django Boards</a>
-    </h1>
-    {% block content %}
-    {% endblock %}
-  </div>
-{% endblock %}
+{% load static %}<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <link rel="stylesheet" href="{% static 'css/authentication.css' %}">
+    {% block stylesheet %}{% endblock %}
+  </head>
+  <body>
+    {% block body %}
+    {% endblock body %}
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% block javascript %}{% endblock %}
+  </body>
+</html>

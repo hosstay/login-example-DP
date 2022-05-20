@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends '../base_boards.html' %}
 
 {% load static %}
 
@@ -22,7 +22,7 @@
   <li class="breadcrumb-item active">Post a reply</li>
 {% endblock %}
 
-{% block content %}
+{% block boardcontent %}
 
   <form method="post" class="mb-4" novalidate>
     {% csrf_token %}

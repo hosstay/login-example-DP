@@ -45,8 +45,9 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'rest_framework',
 
-    'boards',
     'accounts',
+    'home',
+    'boards',
     'api',
 ]
 
@@ -140,9 +141,9 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGOUT_REDIRECT_URL = 'boards'
+LOGOUT_REDIRECT_URL = 'login'
 
-LOGIN_REDIRECT_URL = 'boards'
+LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
